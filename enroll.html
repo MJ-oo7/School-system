@@ -4,225 +4,682 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Enrollment Wizard</title>
+    <title>Academic Portal & Admissions Suite — Enrollment Wizard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap"
+        rel="stylesheet">
+    <script>
+        // Prevent VS Code Live Server from force-reloading the page when uploaded files
+        // or SQLite database files are written inside the project folder during enrollment.
+        (function () {
+            const OriginalWebSocket = window.WebSocket;
+            if (!OriginalWebSocket) return;
+            window.WebSocket = function (url, protocols) {
+                const ws = protocols ? new OriginalWebSocket(url, protocols) : new OriginalWebSocket(url);
+                if (typeof url === "string" && url.includes("/ws")) {
+                    ws.addEventListener("message", function (event) {
+                        if (event.data === "reload") {
+                            event.stopImmediatePropagation();
+                        }
+                    }, true);
+                    let customOnMessage = null;
+                    Object.defineProperty(ws, "onmessage", {
+                        get: function () { return customOnMessage; },
+                        set: function (fn) {
+                            customOnMessage = function (event) {
+                                if (event.data === "reload") return;
+                                return fn.apply(this, arguments);
+                            };
+                            ws.addEventListener("message", customOnMessage);
+                        }
+                    });
+                }
+                return ws;
+            };
+            window.WebSocket.prototype = OriginalWebSocket.prototype;
+            window.WebSocket.CONNECTING = OriginalWebSocket.CONNECTING;
+            window.WebSocket.OPEN = OriginalWebSocket.OPEN;
+            window.WebSocket.CLOSING = OriginalWebSocket.CLOSING;
+            window.WebSocket.CLOSED = OriginalWebSocket.CLOSED;
+        })();
+    </script>
     <style>
+        :root {
+            --surface: #F8FAFC;
+            --surface-lowest: #FFFFFF;
+            --surface-low: #F1F5F9;
+            --surface-container: #E2E8F0;
+            --on-surface: #0F172A;
+            --on-surface-variant: #475569;
+            --outline: #64748B;
+            --outline-variant: #CBD5E1;
+            --primary: #0F294A;
+            --primary-hover: #1B365D;
+            --accent: #D97706;
+            --accent-hover: #B45309;
+            --error-bg: #FFF1F2;
+            --error-border: #FECDD3;
+            --error-text: #BE123C;
+            --success-bg: #ECFDF5;
+            --success-border: #A7F3D0;
+            --success-text: #047857;
+            --shadow-layer-1: 0 1px 3px 0 rgba(15, 41, 74, 0.04), 0 1px 2px -1px rgba(15, 41, 74, 0.02);
+            --shadow-layer-2: 0 4px 6px -1px rgba(15, 41, 74, 0.07), 0 2px 4px -2px rgba(15, 41, 74, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--surface);
+            color: var(--on-surface);
             margin: 0;
-            padding: 20px;
-            color: #333;
+            padding: 0;
+            font-size: 14px;
+            line-height: 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Institutional Top Navigation Bar */
+        .institutional-navbar {
+            background-color: var(--primary);
+            border-bottom: 3px solid var(--accent);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            box-shadow: var(--shadow-layer-2);
+        }
+
+        .navbar-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-identity {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-crest {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(254, 147, 44, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-weight: 700;
+            font-size: 17px;
+            color: #FE932C;
+        }
+
+        .brand-super {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #B0C8F1;
+            display: block;
+        }
+
+        .navbar-title {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin: 0;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            color: #FFFFFF;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
         }
 
         .container {
-            max-width: 850px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 960px;
+            margin: 28px auto 56px auto;
+            padding: 0 24px;
         }
 
-        .header-bar {
+        .wizard-toolbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e1e4e8;
-        }
-
-        h1 {
-            color: #004080;
-            text-align: center;
-            margin: 10px 0 25px 0;
-        }
-
-        h3 {
-            color: #003366;
-            border-bottom: 2px solid #004080;
-            padding-bottom: 5px;
         }
 
         .btn-back {
-            background-color: #f8f9fa;
-            color: #333;
-            border: 1px solid #ced4da;
-            padding: 6px 14px;
+            background-color: var(--surface-lowest);
+            color: var(--primary);
+            border: 1px solid var(--outline-variant);
+            padding: 8px 16px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 13px;
-            font-weight: bold;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             width: auto !important;
             margin-top: 0 !important;
+            box-shadow: var(--shadow-layer-1);
+            transition: background-color 0.15s ease;
         }
 
         .btn-back:hover {
-            background-color: #e2e8f0;
+            background-color: var(--surface-low);
         }
 
+        /* Multi-Step Progression Bar */
+        .stepper-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 720px) {
+            .stepper-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stepper-card {
+            background: var(--surface-lowest);
+            border: 1px solid var(--surface-container);
+            border-left: 3px solid var(--outline-variant);
+            border-radius: 6px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-layer-1);
+            transition: all 0.2s ease;
+        }
+
+        .stepper-card.active-step {
+            border-left: 3px solid var(--accent);
+            box-shadow: var(--shadow-layer-2);
+        }
+
+        .stepper-card.completed-step {
+            border-left: 3px solid var(--primary);
+            background-color: #F8FAFC;
+        }
+
+        .step-indicator {
+            width: 28px;
+            height: 28px;
+            border-radius: 9999px;
+            background: var(--surface-low);
+            border: 1px solid var(--outline-variant);
+            color: var(--on-surface-variant);
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stepper-card.active-step .step-indicator {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #FFFFFF;
+        }
+
+        .stepper-card.completed-step .step-indicator {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #FFFFFF;
+        }
+
+        .step-meta-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--on-surface-variant);
+            display: block;
+        }
+
+        .step-meta-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Active Wizard Stage Card */
         .wizard-step {
             display: none;
+            background: var(--surface-lowest);
+            border: 1px solid var(--surface-container);
+            border-left: 3px solid var(--accent);
+            border-radius: 8px;
+            padding: 28px 32px;
+            box-shadow: var(--shadow-layer-1);
         }
 
         .wizard-step.active {
             display: block;
         }
 
-        button {
-            background-color: #004080;
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            width: 100%;
-            margin-top: 10px;
+        h3 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 32px;
+            color: var(--primary);
+            margin: 0 0 6px 0;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--surface-container);
         }
 
-        button:hover {
-            background-color: #003366;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-        }
-
-        input,
-        select {
-            padding: 9px;
-            width: 100%;
-            margin: 6px 0 14px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        label {
-            font-weight: bold;
-            font-size: 13px;
-            display: block;
-        }
-
+        /* Program Selection Cards */
         .program-card {
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 15px;
+            background: var(--surface-lowest);
+            border: 1px solid var(--surface-container);
+            padding: 18px 22px;
             border-radius: 6px;
             margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-layer-1);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
+        .program-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-layer-2);
+        }
+
+        .program-code-pill {
+            display: inline-block;
+            background: var(--surface-low);
+            border: 1px solid var(--outline-variant);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            margin-bottom: 6px;
+        }
+
+        /* Document Dropzone (2px dashed Slate-300, Slate-50 bg, Navy progress meter) */
         .doc-upload-box {
-            background: #f8f9fa;
-            border: 1px solid #e1e4e8;
-            padding: 15px;
+            background: var(--surface);
+            border: 2px dashed var(--outline-variant);
+            padding: 20px 24px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+
+        .doc-upload-box:hover {
+            border-color: var(--primary);
+            background: #F1F5F9;
+        }
+
+        .dropzone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .dropzone-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .dropzone-spec {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--on-surface-variant);
+            background: var(--surface-lowest);
+            border: 1px solid var(--outline-variant);
+            padding: 2px 8px;
+            border-radius: 9999px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: var(--surface-container);
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        /* Payment Method Segmented Radio Card Grid */
+        .payment-methods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin: 12px 0 22px 0;
+        }
+
+        @media (max-width: 680px) {
+            .payment-methods-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .payment-card {
+            position: relative;
+            background: var(--surface-lowest);
+            border: 1px solid var(--outline-variant);
             border-radius: 6px;
-            margin-bottom: 15px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: var(--shadow-layer-1);
+        }
+
+        .payment-card:hover {
+            border-color: var(--primary);
+        }
+
+        .payment-card.selected {
+            border: 2px solid var(--primary);
+            background-color: #F8FAFC;
+            padding: 15px;
+        }
+
+        .payment-check-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 9999px;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            font-size: 11px;
+            font-weight: 700;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-card.selected .payment-check-badge {
+            display: flex;
+        }
+
+        .payment-card-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .payment-card-desc {
+            font-size: 12px;
+            color: var(--on-surface-variant);
+        }
+
+        /* Buttons & Inputs */
+        button {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.15s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-success {
+            background-color: var(--accent);
+            color: #FFFFFF;
+        }
+
+        .btn-success:hover {
+            background-color: var(--accent-hover);
+        }
+
+        input,
+        select {
+            font-family: 'Inter', sans-serif;
+            padding: 10px 12px;
+            width: 100%;
+            margin: 6px 0 10px 0;
+            border: 1px solid var(--outline-variant);
+            border-radius: 4px;
+            background-color: var(--surface-lowest);
+            color: var(--on-surface);
+            font-size: 14px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            color: var(--on-surface-variant);
+            display: block;
         }
 
         .success-msg {
-            color: #28a745;
-            font-weight: bold;
+            background-color: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-text);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: 600;
             margin-top: 8px;
             font-size: 13px;
         }
 
         .error-msg {
-            color: #d9534f;
-            font-weight: bold;
+            background-color: var(--error-bg);
+            border: 1px solid var(--error-border);
+            color: var(--error-text);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: 600;
             margin-top: 8px;
             font-size: 13px;
-        }
-
-        .badge {
-            background: #e2e8f0;
-            color: #003366;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
 
+    <!-- Institutional Top Header -->
+    <header class="institutional-navbar">
+        <div class="navbar-inner">
+            <div class="brand-identity">
+                <div class="brand-crest">AP</div>
+                <div>
+                    <span class="brand-super">Office of Admissions — Candidate Dossier</span>
+                    <h1 class="navbar-title">Student Enrollment Wizard</h1>
+                </div>
+            </div>
+            <span id="display-user-badge" class="badge">Candidate: </span>
+        </div>
+    </header>
+
     <div class="container">
-        <!-- TOP NAVIGATION BAR -->
-        <div class="header-bar">
-            <button type="button" onclick="undoStep()" class="btn-back">&larr; Back</button>
-            <span id="display-user-badge" class="badge">User: </span>
+        <!-- TOP NAVIGATION TOOLBAR -->
+        <div class="wizard-toolbar">
+            <button type="button" onclick="undoStep()" class="btn-back">&larr; Return to Previous Step</button>
+            <div style="font-size: 12px; color: var(--on-surface-variant); font-weight: 500;">
+                Guided 3-Stage Admissions Submission
+            </div>
         </div>
 
-        <h1>Student Enrollment Wizard</h1>
+        <!-- MULTI-STEP PROGRESSION INDICATOR -->
+        <div class="stepper-grid">
+            <div class="stepper-card active-step" id="indicator-step-1">
+                <div class="step-indicator" id="badge-step-1">1</div>
+                <div>
+                    <span class="step-meta-label">Stage 01</span>
+                    <span class="step-meta-title">Select Academic Program</span>
+                </div>
+            </div>
+            <div class="stepper-card" id="indicator-step-2">
+                <div class="step-indicator" id="badge-step-2">2</div>
+                <div>
+                    <span class="step-meta-label">Stage 02</span>
+                    <span class="step-meta-title">Academic Dossier &amp; Records</span>
+                </div>
+            </div>
+            <div class="stepper-card" id="indicator-step-3">
+                <div class="step-indicator" id="badge-step-3">3</div>
+                <div>
+                    <span class="step-meta-label">Stage 03</span>
+                    <span class="step-meta-title">Application Fee Deposit</span>
+                </div>
+            </div>
+        </div>
 
         <!-- STEP 1: CHOOSE PROGRAM -->
         <div id="step-programs" class="wizard-step active">
-            <h3>Select a Program</h3>
-            <p style="font-size: 13px; color: #666;">Choose your desired academic program below by clicking
-                <strong>Join</strong>.
+            <h3>Select an Academic Program</h3>
+            <p style="font-size: 14px; color: var(--on-surface-variant); margin: 8px 0 20px 0;">
+                Review the active degree offerings below and select <strong>Select Program</strong> to initialize your
+                application dossier.
             </p>
 
             <div id="programs-list-container">
-                <p>Loading available programs...</p>
+                <p style="color: var(--on-surface-variant);">Loading available programs...</p>
             </div>
-            <div id="program-error" class="error-msg"></div>
+            <div id="program-error"></div>
         </div>
 
         <!-- STEP 2: UPLOAD DOCUMENTS -->
         <div id="step-documents" class="wizard-step">
-            <h3>Upload Required Documents</h3>
-            <p style="font-size: 13px; color: #666;">Application ID: <strong id="active-app-id"></strong> (Allowed formats: PDF, JPG, PNG, DOC, DOCX — Max 10 MB)</p>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; border-bottom: 1px solid var(--surface-container); padding-bottom: 12px; margin-bottom: 16px;">
+                <h3 style="border: none; padding: 0; margin: 0;">Upload Required Academic Dossier</h3>
+                <span style="font-size: 12px; font-weight: 600; color: var(--primary); background: var(--surface-low); border: 1px solid var(--outline-variant); padding: 4px 10px; border-radius: 9999px;">
+                    Dossier ID: <strong id="active-app-id"></strong>
+                </span>
+            </div>
+            <p style="font-size: 13px; color: var(--on-surface-variant); margin: 0 0 20px 0;">
+                Submit official digital copies of your academic records. Accepted file formats: <strong>PDF, DOCX, DOC, JPG, PNG</strong> (Maximum 10 MB per document).
+            </p>
 
-            <!-- Report Card Upload -->
+            <!-- Report Card Dropzone -->
             <div class="doc-upload-box">
-                <label><strong>Report Card</strong></label>
+                <div class="dropzone-header">
+                    <span class="dropzone-title">1. Official Report Card / Academic Transcript</span>
+                    <span class="dropzone-spec">Required &bull; PDF, DOCX, JPG, PNG (Max 10MB)</span>
+                </div>
+                <p style="font-size: 12px; color: var(--on-surface-variant); margin: 0 0 8px 0;">
+                    Provide your most recent scholastic report card or certified transcript of records.
+                </p>
                 <input type="file" id="file-report-card" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                <div class="progress-track" id="progress-track-report">
+                    <div class="progress-bar" id="progress-bar-report"></div>
+                </div>
                 <div id="status-report-card"></div>
             </div>
 
-            <!-- Birth Certificate Upload -->
+            <!-- Birth Certificate Dropzone -->
             <div class="doc-upload-box">
-                <label><strong>Birth Certificate</strong></label>
+                <div class="dropzone-header">
+                    <span class="dropzone-title">2. PSA / Official Birth Certificate</span>
+                    <span class="dropzone-spec">Required &bull; PDF, DOCX, JPG, PNG (Max 10MB)</span>
+                </div>
+                <p style="font-size: 12px; color: var(--on-surface-variant); margin: 0 0 8px 0;">
+                    Provide a clear scan of your government-issued birth certificate for identity verification.
+                </p>
                 <input type="file" id="file-birth-cert" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                <div class="progress-track" id="progress-track-birth">
+                    <div class="progress-bar" id="progress-bar-birth"></div>
+                </div>
                 <div id="status-birth-cert"></div>
             </div>
 
             <button type="button" onclick="validateAndProceedToPayment()" class="btn-success"
-                style="margin-top: 20px;">Proceed to Payment &rarr;</button>
+                style="margin-top: 12px;">Verify Dossier &amp; Proceed to Payment &rarr;</button>
             <div id="doc-validation-error"></div>
         </div>
 
         <!-- STEP 3: PAYMENT METHOD -->
         <div id="step-payment" class="wizard-step">
-            <h3>Application Fee Payment</h3>
-            <p style="font-size: 13px; color: #666;">Select your preferred payment option to complete your application.
+            <h3>Application Fee Deposit</h3>
+            <p style="font-size: 14px; color: var(--on-surface-variant); margin: 8px 0 20px 0;">
+                Select your preferred institutional payment channel to remit the non-refundable admissions processing fee
+                and formally submit your application for faculty review.
             </p>
 
-            <div style="background: #fdfdfe; border: 1px solid #e1e4e8; padding: 20px; border-radius: 6px;">
-                <label for="pay-method">Payment Method:</label>
-                <select id="pay-method">
+            <div>
+                <label>Select Institutional Payment Channel</label>
+                <!-- Segmented Radio Card Grid synced with #pay-method -->
+                <div class="payment-methods-grid">
+                    <div class="payment-card selected" id="card-gcash" onclick="selectPaymentCard('gcash')">
+                        <div class="payment-check-badge">&#10003;</div>
+                        <div class="payment-card-title">GCash e-Wallet</div>
+                        <div class="payment-card-desc">Instant digital remittance with real-time reference receipt.</div>
+                    </div>
+                    <div class="payment-card" id="card-debit_card" onclick="selectPaymentCard('debit_card')">
+                        <div class="payment-check-badge">&#10003;</div>
+                        <div class="payment-card-title">Direct Debit Card</div>
+                        <div class="payment-card-desc">Immediate settlement from your linked bank account.</div>
+                    </div>
+                    <div class="payment-card" id="card-credit_card" onclick="selectPaymentCard('credit_card')">
+                        <div class="payment-check-badge">&#10003;</div>
+                        <div class="payment-card-title">Credit Card</div>
+                        <div class="payment-card-desc">Visa / Mastercard institutional tuition &amp; fee processing.</div>
+                    </div>
+                </div>
+
+                <!-- Underlying select preserved for compatibility -->
+                <select id="pay-method" onchange="selectPaymentCard(this.value)" style="display: none;">
                     <option value="gcash">GCash</option>
                     <option value="debit_card">Debit Card</option>
                     <option value="credit_card">Credit Card</option>
                 </select>
 
-                <label for="pay-amount">Amount (PHP):</label>
-                <input type="text" id="pay-amount" value="500.00" readonly style="background: #e9ecef;">
+                <div style="background: var(--surface); border: 1px solid var(--surface-container); padding: 18px 20px; border-radius: 6px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <label for="pay-amount" style="margin-bottom: 2px;">Admissions Processing Deposit (PHP)</label>
+                        <span style="font-size: 12px; color: var(--on-surface-variant);">Standard non-refundable evaluation fee</span>
+                    </div>
+                    <input type="text" id="pay-amount" value="500.00" readonly
+                        style="width: 140px; text-align: right; font-weight: 700; font-size: 18px; color: var(--primary); background: var(--surface-lowest); margin: 0;">
+                </div>
 
-                <button type="button" onclick="submitPayment()" class="btn-success">Complete Payment & Submit
-                    Enrollment</button>
+                <button type="button" onclick="submitPayment()" class="btn-success">Pay Deposit &amp; Submit Application</button>
                 <div id="payment-result"></div>
             </div>
         </div>
@@ -245,24 +702,69 @@
 
         let currentWizardStep = "step-programs";
 
+        function selectPaymentCard(methodValue) {
+            const selectEl = document.getElementById("pay-method");
+            if (selectEl) selectEl.value = methodValue;
+            document.querySelectorAll(".payment-card").forEach(card => card.classList.remove("selected"));
+            const activeCard = document.getElementById(`card-${methodValue}`);
+            if (activeCard) activeCard.classList.add("selected");
+        }
+
+        function updateStepperUI(stepId) {
+            const s1 = document.getElementById("indicator-step-1");
+            const s2 = document.getElementById("indicator-step-2");
+            const s3 = document.getElementById("indicator-step-3");
+            const b1 = document.getElementById("badge-step-1");
+            const b2 = document.getElementById("badge-step-2");
+            const b3 = document.getElementById("badge-step-3");
+
+            [s1, s2, s3].forEach(el => el.classList.remove("active-step", "completed-step"));
+
+            if (stepId === "step-programs") {
+                s1.classList.add("active-step");
+                b1.innerHTML = "1";
+                b2.innerHTML = "2";
+                b3.innerHTML = "3";
+            } else if (stepId === "step-documents") {
+                s1.classList.add("completed-step");
+                b1.innerHTML = "&#10003;";
+                s2.classList.add("active-step");
+                b2.innerHTML = "2";
+                b3.innerHTML = "3";
+            } else if (stepId === "step-payment") {
+                s1.classList.add("completed-step");
+                b1.innerHTML = "&#10003;";
+                s2.classList.add("completed-step");
+                b2.innerHTML = "&#10003;";
+                s3.classList.add("active-step");
+                b3.innerHTML = "3";
+            }
+        }
+
         window.onload = async function () {
             if (!sessionData.userId) {
                 alert("Please log in through the Student Portal first.");
                 window.location.href = "index.html";
                 return;
             }
-            document.getElementById("display-user-badge").innerText = `User: ${sessionData.fullName || sessionData.userId}`;
+            document.getElementById("display-user-badge").innerText = `Candidate: ${sessionData.fullName || sessionData.userId}`;
 
             // Always load programs list so students can choose or change programs freely
             await loadProgramsForEnrollment();
 
-            // If an application ID is stored, verify it and sync its uploaded documents
+            // If an application ID is stored, verify it and restore the active wizard step
             if (sessionData.applicationId) {
                 const isValidDraft = await syncExistingApplication(sessionData.applicationId);
-                const urlParams = new URLSearchParams(window.location.search);
-                if (isValidDraft && urlParams.get("resume") === "true") {
+                if (isValidDraft) {
+                    const savedStep = sessionStorage.getItem("enrollment_wizard_step");
                     if (uploadedDocs.reportCard && uploadedDocs.birthCert) {
-                        showStep("step-payment");
+                        if (savedStep === "step-programs" || savedStep === "step-documents") {
+                            showStep(savedStep);
+                        } else {
+                            showStep("step-payment");
+                        }
+                    } else if (savedStep === "step-programs") {
+                        showStep("step-programs");
                     } else {
                         showStep("step-documents");
                     }
@@ -287,17 +789,21 @@
                 uploadedDocs = { reportCard: null, birthCert: null };
                 document.getElementById("status-report-card").innerHTML = "";
                 document.getElementById("status-birth-cert").innerHTML = "";
+                const trackReport = document.getElementById("progress-track-report");
+                const trackBirth = document.getElementById("progress-track-birth");
+                if (trackReport) trackReport.style.display = "none";
+                if (trackBirth) trackBirth.style.display = "none";
 
                 if (appData.documents && appData.documents.length > 0) {
                     appData.documents.forEach(doc => {
                         if (doc.document_type === "Report Card") {
                             uploadedDocs.reportCard = doc.file_name;
                             document.getElementById("status-report-card").innerHTML =
-                                `<p class='success-msg'>Uploaded (${doc.file_name}). Select a new file above only if you wish to replace it.</p>`;
+                                `<p class='success-msg'>&#10003; Uploaded (${doc.file_name}). Select a new file above only if you wish to replace it.</p>`;
                         } else if (doc.document_type === "Birth Certificate") {
                             uploadedDocs.birthCert = doc.file_name;
                             document.getElementById("status-birth-cert").innerHTML =
-                                `<p class='success-msg'>Uploaded (${doc.file_name}). Select a new file above only if you wish to replace it.</p>`;
+                                `<p class='success-msg'>&#10003; Uploaded (${doc.file_name}). Select a new file above only if you wish to replace it.</p>`;
                         }
                     });
                 }
@@ -310,6 +816,7 @@
 
         function clearActiveApplication() {
             localStorage.removeItem("student_application_id");
+            sessionStorage.removeItem("enrollment_wizard_step");
             sessionData.applicationId = null;
             uploadedDocs = { reportCard: null, birthCert: null };
             document.getElementById("active-app-id").innerText = "";
@@ -319,6 +826,8 @@
             document.querySelectorAll(".wizard-step").forEach(el => el.classList.remove("active"));
             document.getElementById(stepId).classList.add("active");
             currentWizardStep = stepId;
+            sessionStorage.setItem("enrollment_wizard_step", stepId);
+            updateStepperUI(stepId);
         }
 
         function undoStep() {
@@ -333,7 +842,7 @@
 
         async function loadProgramsForEnrollment() {
             const container = document.getElementById("programs-list-container");
-            container.innerHTML = "<p>Loading active programs...</p>";
+            container.innerHTML = "<p style='color: var(--on-surface-variant);'>Loading active programs...</p>";
 
             try {
                 const response = await fetch(`${API_BASE}/programs/`);
@@ -341,7 +850,7 @@
                 const programs = await response.json();
 
                 if (programs.length === 0) {
-                    container.innerHTML = "<p style='color: #666;'>No active academic programs available at the moment.</p>";
+                    container.innerHTML = "<p style='color: var(--on-surface-variant);'>No active academic programs available at the moment.</p>";
                     return;
                 }
 
@@ -350,10 +859,11 @@
                     html += `
                         <div class="program-card">
                             <div>
-                                <h4 style="margin: 0 0 5px 0; color: #004080;">${prog.course_name}</h4>
-                                <span style="font-size: 13px; color: #666;">Academic Year: <strong>${prog.academic_year}</strong></span>
+                                <span class="program-code-pill">${prog.course_id}</span>
+                                <h4 style="margin: 0 0 4px 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; color: var(--primary);">${prog.course_name}</h4>
+                                <span style="font-size: 13px; color: var(--on-surface-variant);">Academic Year: <strong>${prog.academic_year}</strong></span>
                             </div>
-                            <button type="button" onclick="joinProgram('${prog.course_id}')" style="width: auto; margin-top: 0;">Join</button>
+                            <button type="button" onclick="joinProgram('${prog.course_id}')" style="width: auto; margin-top: 0; padding: 10px 20px;">Select Program &rarr;</button>
                         </div>
                     `;
                 });
@@ -366,7 +876,7 @@
 
         async function joinProgram(courseId) {
             const errorDiv = document.getElementById("program-error");
-            errorDiv.innerText = "";
+            errorDiv.innerHTML = "";
 
             try {
                 const payload = {
@@ -402,24 +912,37 @@
                 showStep("step-documents");
 
             } catch (error) {
-                errorDiv.innerText = "Error: " + error.message;
+                errorDiv.innerHTML = `<p class='error-msg'>Error: ${error.message}</p>`;
             }
         }
 
         async function uploadSingleFile(docType, file, statusDivId) {
             const statusDiv = document.getElementById(statusDivId);
+            const isReport = docType === "Report Card";
+            const trackEl = document.getElementById(isReport ? "progress-track-report" : "progress-track-birth");
+            const barEl = document.getElementById(isReport ? "progress-bar-report" : "progress-bar-birth");
+
+            if (trackEl && barEl) {
+                trackEl.style.display = "block";
+                barEl.style.width = "45%";
+            }
+
             const formData = new FormData();
             formData.append("application_id", sessionData.applicationId);
             formData.append("document_type", docType);
             formData.append("file", file);
 
-            statusDiv.innerHTML = "<p style='color: #666;'>Uploading...</p>";
+            statusDiv.innerHTML = "<p style='color: var(--on-surface-variant); font-size: 12px;'>Uploading document to admissions vault...</p>";
             const response = await fetch(`${API_BASE}/documents/upload`, {
                 method: "POST",
                 body: formData
             });
 
             if (!response.ok) {
+                if (trackEl && barEl) {
+                    barEl.style.width = "0%";
+                    trackEl.style.display = "none";
+                }
                 let errorMsg = `Failed to upload ${docType}.`;
                 try {
                     const err = await response.json();
@@ -438,6 +961,9 @@
             }
 
             const data = await response.json();
+            if (trackEl && barEl) {
+                barEl.style.width = "100%";
+            }
             if (docType === "Report Card") {
                 uploadedDocs.reportCard = data.file_name;
                 document.getElementById("file-report-card").value = "";
@@ -445,7 +971,7 @@
                 uploadedDocs.birthCert = data.file_name;
                 document.getElementById("file-birth-cert").value = "";
             }
-            statusDiv.innerHTML = `<p class='success-msg'>Uploaded successfully (${data.file_name})!</p>`;
+            statusDiv.innerHTML = `<p class='success-msg'>&#10003; Uploaded successfully (${data.file_name})!</p>`;
             return true;
         }
 
@@ -470,6 +996,9 @@
             }
 
             try {
+                // Pre-set target step in sessionStorage in case a dev server reloads the page upon file save
+                sessionStorage.setItem("enrollment_wizard_step", "step-payment");
+
                 const uploadTasks = [];
                 if (hasNewReportCard) {
                     uploadTasks.push(uploadSingleFile("Report Card", reportCardInput.files[0], "status-report-card"));
@@ -479,7 +1008,7 @@
                 }
 
                 if (uploadTasks.length > 0) {
-                    errorDiv.innerHTML = "<p style='color: #666;'>Uploading documents...</p>";
+                    errorDiv.innerHTML = "<p style='color: var(--on-surface-variant);'>Uploading documents...</p>";
                     await Promise.all(uploadTasks);
                 }
 
@@ -487,7 +1016,7 @@
                 showStep("step-payment");
 
             } catch (error) {
-                // If the backend indicates application ID is missing, clear storage and prompt re-selection
+                sessionStorage.setItem("enrollment_wizard_step", "step-documents");
                 if (error.message.includes("Application ID not found")) {
                     clearActiveApplication();
                 }
@@ -527,10 +1056,11 @@
                 }
 
                 const data = await response.json();
-                resultDiv.innerHTML = `<p class='success-msg'>Payment successful! Reference No: <strong>${data.reference_number}</strong>. Redirecting to your dashboard...</p>`;
+                resultDiv.innerHTML = `<p class='success-msg'>&#10003; Payment confirmed! Official Receipt Reference: <strong>${data.reference_number}</strong>. Redirecting to your candidate dashboard...</p>`;
 
                 // Clear application session upon successful payment completion
                 localStorage.removeItem("student_application_id");
+                sessionStorage.removeItem("enrollment_wizard_step");
 
                 setTimeout(() => {
                     window.location.href = "index.html";
