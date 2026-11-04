@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Form
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from typing import List
 import os
 import uuid
@@ -25,12 +26,15 @@ app = FastAPI(
 Base.metadata.create_all(bind=engine)
 
 
-# Seed a default Admin account if none exists
+# Seed a default Admin account (ADMIN-001) if it doesn't exist
 def seed_default_admin():
     db = SessionLocal()
     try:
         admin_user = db.query(models.User).filter(
-            models.User.user_type == models.UserAccessEnum.admin
+            or_(
+                models.User.user_id == "ADMIN-001",
+                models.User.email == "admin@school.edu"
+            )
         ).first()
         if not admin_user:
             default_admin = models.User(
@@ -42,6 +46,9 @@ def seed_default_admin():
                 user_type=models.UserAccessEnum.admin
             )
             db.add(default_admin)
+            db.commit()
+        elif admin_user.user_type != models.UserAccessEnum.admin:
+            admin_user.user_type = models.UserAccessEnum.admin
             db.commit()
     finally:
         db.close()
@@ -268,17 +275,17 @@ def create_application(application: schemas.ApplicationCreate, db: Session = Dep
     # Prevent duplicate submitted/active applications for the same user & course
     existing_course_app = db.query(models.Application).filter(
         models.Application.user_id == application.user_id,
-        models.Application.course_id == application.course_id
+        models.Application.course_id == application.course_id,
+        models.Application.status != models.ApplicationStatusEnum.rejected
     ).first()
 
     if existing_course_app:
         if existing_course_app.status == models.ApplicationStatusEnum.draft:
             return existing_course_app
-        if existing_course_app.status != models.ApplicationStatusEnum.rejected:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"You already have an active application ({existing_course_app.application_id}) for this program."
-            )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"You already have an active application ({existing_course_app.application_id}) for this program."
+        )
 
     # If the user is changing courses on an existing draft application (e.g., via Back button)
     if application.application_id:
@@ -333,6 +340,13 @@ def process_mock_payment(payment: schemas.PaymentCreate, db: Session = Depends(g
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Payment has already been processed for this application."
+        )
+
+    # Require both academic documents before payment processing
+    if len(application.documents) < 2:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Please upload both required documents (Report Card and Birth Certificate) before making a payment."
         )
 
     # Auto-generate IDs and a professional reference number
@@ -440,11 +454,17 @@ class AdminLoginRequest(BaseModel):
 
 @app.post("/users/{user_id}/verify-admin")
 def verify_admin_login(user_id: str, credentials: AdminLoginRequest, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.user_id == user_id).first()
-    if not user:
+    # Ensure default admin is seeded even if DB was reset while server was running
+    seed_default_admin()
+
+    normalized_id = user_id.strip()
+    user = db.query(models.User).filter(
+        models.User.user_id == normalized_id
+    ).first()
+    if not user or user.user_id != normalized_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found."
+            detail="Admin ID not found. Note: Admin ID is case-sensitive."
         )
 
     if user.user_password != credentials.user_password:
