@@ -1,0 +1,2 @@
+1.Database Schema & Data Modeling:
+Define how entities relate before writing logic.Set up PostgreSQL and model your primary tables: users, students, programs, applications, documents, and payments. Establishing your foreign keys and data types early ensures your FastAPI backend has a clear structure to query.

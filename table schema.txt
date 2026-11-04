@@ -1,0 +1,56 @@
+table schema
+
+CREATE TYPE user_access AS ENUM ('student', 'employee', 'admin');
+CREATE TYPE application_status AS ENUM ('draft', 'submitted', 'under_review', 'approved', 'rejected');
+CREATE TYPE payment_method AS ENUM ('gcash', 'debit_card', 'credit_card');
+CREATE TYPE payment_status AS ENUM ('pending', 'completed', 'failed');
+
+CREATE TABLE users (
+user_id VARCHAR(25) PRIMARY KEY, 
+email VARCHAR(100) UNIQUE NOT NULL, 
+user_password VARCHAR(255) NOT NULL,
+full_name VARCHAR(255) NOT NULL, 
+phone_number VARCHAR(25), 
+user_type user_access DEFAULT 'student', 
+created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP 
+);
+
+
+
+CREATE TABLE programs (
+course_id VARCHAR(25) PRIMARY KEY, 
+course_name VARCHAR(100) NOT NULL,
+academic_year VARCHAR(25) NOT NULL,
+is_active BOOLEAN DEFAULT TRUE
+);
+ 
+
+CREATE TABLE applications (
+application_id VARCHAR(25) PRIMARY KEY,
+user_id VARCHAR(25) NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+course_id VARCHAR(25) NOT NULL REFERENCES programs(course_id) ON DELETE RESTRICT,
+status application_status DEFAULT 'draft', 
+created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE documents (
+document_id VARCHAR(25) PRIMARY KEY,
+application_id VARCHAR(25) NOT NULL REFERENCES applications(application_id) ON DELETE CASCADE,
+document_type VARCHAR(100) NOT NULL,
+file_path VARCHAR(255) NOT NULL,
+file_name VARCHAR(255) NOT NULL,
+file_type VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE payments (
+payment_id VARCHAR(25) PRIMARY KEY,
+application_id VARCHAR(25) NOT NULL REFERENCES applications(application_id) ON DELETE CASCADE,
+amount DECIMAL(10, 2)  NOT NULL DEFAULT 500.00,
+payment_method payment_method NOT NULL,
+reference_number VARCHAR(100) NOT NULL,
+status payment_status DEFAULT 'completed',
+paid_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

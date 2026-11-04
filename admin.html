@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Admissions Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #800000;
+            text-align: center;
+        }
+
+        h3 {
+            color: #5a0000;
+            border-bottom: 2px solid #800000;
+            padding-bottom: 5px;
+        }
+
+        .nav-link {
+            margin-bottom: 20px;
+            display: inline-block;
+            text-decoration: none;
+            color: #004080;
+            font-weight: bold;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .auth-box {
+            background: #fff3f3;
+            border: 1px solid #ffcdd2;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            max-width: 400px;
+        }
+
+        button {
+            background-color: #800000;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #600000;
+        }
+
+        button:disabled {
+            background-color: #ccc !important;
+            cursor: not-allowed;
+        }
+
+        .btn-approve {
+            background-color: #28a745;
+            width: auto;
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-top: 0;
+            margin-right: 4px;
+        }
+
+        .btn-approve:hover {
+            background-color: #218838;
+        }
+
+        .btn-reject {
+            background-color: #dc3545;
+            width: auto;
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-top: 0;
+        }
+
+        .btn-reject:hover {
+            background-color: #c82333;
+        }
+
+        input,
+        select {
+            padding: 8px;
+            width: 100%;
+            margin: 6px 0 14px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            font-size: 13px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #800000;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            display: inline-block;
+        }
+
+        .status-draft {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .status-submitted {
+            background-color: #007bff;
+        }
+
+        .status-under_review {
+            background-color: #17a2b8;
+        }
+
+        .status-approved {
+            background-color: #28a745;
+        }
+
+        .status-rejected {
+            background-color: #dc3545;
+        }
+
+        #admin-dashboard {
+            display: none;
+        }
+
+        .error-msg {
+            color: #d9534f;
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .success-msg {
+            color: #28a745;
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .admin-section {
+            background: #fdfdfe;
+            border: 1px solid #e1e4e8;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+        }
+
+        .doc-link {
+            display: block;
+            color: #004080;
+            text-decoration: none;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .doc-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <a href="index.html" class="nav-link">&larr; Back to Student Portal</a>
+        <h1>Admissions Admin Portal</h1>
+
+        <!-- AUTHENTICATION GATE -->
+        <div class="auth-box" id="auth-section">
+            <h3>Admin Sign In</h3>
+            <label for="admin-id-input">Admin User ID:</label>
+            <input type="text" id="admin-id-input" placeholder="e.g., ADMIN-001">
+
+            <label for="admin-password-input">Password:</label>
+            <input type="password" id="admin-password-input" placeholder="Enter password">
+
+            <button onclick="verifyAdminAccess()">Login to Dashboard</button>
+            <div id="auth-error" class="error-msg"></div>
+        </div>
+
+        <!-- PROTECTED ADMIN DASHBOARD -->
+        <div id="admin-dashboard">
+
+            <!-- SECTION 1: Create Academic Programs -->
+            <div class="admin-section">
+                <h3>Create New Academic Program</h3>
+                <div style="display: flex; gap: 15px;">
+                    <div style="flex: 1;">
+                        <label for="prog-id">Course ID:</label>
+                        <input type="text" id="prog-id" placeholder="e.g., BSCS-2026">
+                    </div>
+                    <div style="flex: 2;">
+                        <label for="prog-name">Course Name:</label>
+                        <input type="text" id="prog-name" placeholder="e.g., B.S. in Computer Science">
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="prog-year">Academic Year:</label>
+                        <input type="text" id="prog-year" placeholder="e.g., 2026-2027">
+                    </div>
+                </div>
+                <button onclick="createProgram()" style="width: auto;">Publish Program</button>
+                <div id="prog-result"></div>
+            </div>
+
+            <!-- SECTION 2: Incoming Student Applications Table -->
+            <div class="admin-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="border: none; margin: 0; padding: 0;">Incoming Student Applications</h3>
+                    <button onclick="fetchAllApplications()" style="width: auto; margin-top: 0;">Refresh Data</button>
+                </div>
+
+                <div id="admin-action-feedback"></div>
+                <div id="admin-table-container">
+                    <p style="color: #666;">Loading applications...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000";
+
+        async function verifyAdminAccess() {
+            const adminId = document.getElementById("admin-id-input").value.trim();
+            const password = document.getElementById("admin-password-input").value;
+            const errorDiv = document.getElementById("auth-error");
+            errorDiv.innerText = "";
+
+            if (!adminId || !password) {
+                errorDiv.innerText = "Please enter both User ID and Password.";
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/users/${adminId}/verify-admin`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_password: password })
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.detail || "Authentication failed.");
+                }
+
+                // Unlock dashboard
+                document.getElementById("auth-section").style.display = "none";
+                document.getElementById("admin-dashboard").style.display = "block";
+
+                fetchAllApplications();
+
+            } catch (error) {
+                errorDiv.innerText = "Error: " + error.message;
+            }
+        }
+
+        // Create New Program Function
+        async function createProgram() {
+            const courseId = document.getElementById("prog-id").value.trim();
+            const courseName = document.getElementById("prog-name").value.trim();
+            const academicYear = document.getElementById("prog-year").value.trim();
+            const resultDiv = document.getElementById("prog-result");
+            resultDiv.innerHTML = "";
+
+            if (!courseId || !courseName || !academicYear) {
+                resultDiv.innerHTML = "<p class='error-msg'>Please fill in all program fields.</p>";
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/programs/`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        course_id: courseId,
+                        course_name: courseName,
+                        academic_year: academicYear,
+                        is_active: true
+                    })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    let errorMsg = "Failed to create program.";
+                    if (typeof err.detail === "string") errorMsg = err.detail;
+                    else if (Array.isArray(err.detail)) errorMsg = err.detail.map(e => e.msg).join(', ');
+                    throw new Error(errorMsg);
+                }
+
+                const data = await response.json();
+                resultDiv.innerHTML = `<p class='success-msg'>Success! Program '${data.course_name}' (${data.course_id}) published successfully.</p>`;
+
+                // Clear input fields
+                document.getElementById("prog-id").value = "";
+                document.getElementById("prog-name").value = "";
+                document.getElementById("prog-year").value = "";
+
+            } catch (error) {
+                resultDiv.innerHTML = `<p class='error-msg'>Error: ${error.message}</p>`;
+            }
+        }
+
+        async function updateApplicationStatus(applicationId, newStatus) {
+            const feedbackDiv = document.getElementById("admin-action-feedback");
+            feedbackDiv.innerHTML = "";
+
+            try {
+                const response = await fetch(`${API_BASE}/applications/${applicationId}/status`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || "Failed to update application status.");
+                }
+
+                feedbackDiv.innerHTML = `<p class='success-msg'>Application <strong>${applicationId}</strong> status updated to <strong>${newStatus.toUpperCase()}</strong>.</p>`;
+                fetchAllApplications();
+
+            } catch (error) {
+                feedbackDiv.innerHTML = `<p class='error-msg'>Error: ${error.message}</p>`;
+            }
+        }
+
+        async function fetchAllApplications() {
+            const container = document.getElementById("admin-table-container");
+            container.innerHTML = "<p>Loading admissions data...</p>";
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/applications`);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch applications.");
+                }
+                const applications = await response.json();
+
+                if (applications.length === 0) {
+                    container.innerHTML = "<p style='color: #666;'>No applications found in the database.</p>";
+                    return;
+                }
+
+                let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Application ID</th>
+                            <th>Student User ID</th>
+                            <th>Course ID</th>
+                            <th>Status</th>
+                            <th>Documents</th>
+                            <th>Payments</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+                applications.forEach(app => {
+                    let badgeClass = `status-badge status-${app.status}`;
+
+                    let docsHtml = "0 file(s)";
+                    if (app.documents && app.documents.length > 0) {
+                        docsHtml = app.documents.map(doc => {
+                            const normalizedPath = (doc.file_path || "").replace(/\\/g, "/");
+                            const fileUrl = `${API_BASE}/${normalizedPath}`;
+                            return `<a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="doc-link">&#128196; ${doc.document_type} (${doc.file_name})</a>`;
+                        }).join("");
+                    }
+
+                    let paymentsHtml = "0 record(s)";
+                    if (app.payments && app.payments.length > 0) {
+                        paymentsHtml = app.payments.map(pay =>
+                            `<div style="font-size: 12px;"><strong>${pay.reference_number}</strong><br>${pay.payment_method.toUpperCase()} - PHP ${Number(pay.amount).toFixed(2)}</div>`
+                        ).join("");
+                    }
+
+                    const isApproved = app.status === "approved";
+                    const isRejected = app.status === "rejected";
+
+                    html += `
+                    <tr>
+                        <td><strong>${app.application_id}</strong></td>
+                        <td>${app.user_id}</td>
+                        <td>${app.course_id}</td>
+                        <td><span class="${badgeClass}">${app.status.toUpperCase()}</span></td>
+                        <td>${docsHtml}</td>
+                        <td>${paymentsHtml}</td>
+                        <td style="white-space: nowrap;">
+                            <button class="btn-approve" onclick="updateApplicationStatus('${app.application_id}', 'approved')" ${isApproved ? "disabled" : ""}>Approve</button>
+                            <button class="btn-reject" onclick="updateApplicationStatus('${app.application_id}', 'rejected')" ${isRejected ? "disabled" : ""}>Reject</button>
+                        </td>
+                    </tr>
+                `;
+                });
+
+                html += `</tbody></table>`;
+                container.innerHTML = html;
+
+            } catch (error) {
+                container.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+
+</body>
+
+</html>

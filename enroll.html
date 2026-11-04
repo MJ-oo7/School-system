@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Enrollment Wizard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        h1 {
+            color: #004080;
+            text-align: center;
+            margin: 10px 0 25px 0;
+        }
+
+        h3 {
+            color: #003366;
+            border-bottom: 2px solid #004080;
+            padding-bottom: 5px;
+        }
+
+        .btn-back {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #ced4da;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            width: auto !important;
+            margin-top: 0 !important;
+        }
+
+        .btn-back:hover {
+            background-color: #e2e8f0;
+        }
+
+        .wizard-step {
+            display: none;
+        }
+
+        .wizard-step.active {
+            display: block;
+        }
+
+        button {
+            background-color: #004080;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #003366;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        input,
+        select {
+            padding: 9px;
+            width: 100%;
+            margin: 6px 0 14px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 13px;
+            display: block;
+        }
+
+        .program-card {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .doc-upload-box {
+            background: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .success-msg {
+            color: #28a745;
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+
+        .error-msg {
+            color: #d9534f;
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+
+        .badge {
+            background: #e2e8f0;
+            color: #003366;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- TOP NAVIGATION BAR -->
+        <div class="header-bar">
+            <button type="button" onclick="undoStep()" class="btn-back">&larr; Back</button>
+            <span id="display-user-badge" class="badge">User: </span>
+        </div>
+
+        <h1>Student Enrollment Wizard</h1>
+
+        <!-- STEP 1: CHOOSE PROGRAM -->
+        <div id="step-programs" class="wizard-step active">
+            <h3>Select a Program</h3>
+            <p style="font-size: 13px; color: #666;">Choose your desired academic program below by clicking
+                <strong>Join</strong>.
+            </p>
+
+            <div id="programs-list-container">
+                <p>Loading available programs...</p>
+            </div>
+            <div id="program-error" class="error-msg"></div>
+        </div>
+
+        <!-- STEP 2: UPLOAD DOCUMENTS -->
+        <div id="step-documents" class="wizard-step">
+            <h3>Upload Required Documents</h3>
+            <p style="font-size: 13px; color: #666;">Application ID: <strong id="active-app-id"></strong> (Allowed formats: PDF, JPG, PNG, DOC, DOCX — Max 10 MB)</p>
+
+            <!-- Report Card Upload -->
+            <div class="doc-upload-box">
+                <label><strong>Report Card</strong></label>
+                <input type="file" id="file-report-card" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                <div id="status-report-card"></div>
+            </div>
+
+            <!-- Birth Certificate Upload -->
+            <div class="doc-upload-box">
+                <label><strong>Birth Certificate</strong></label>
+                <input type="file" id="file-birth-cert" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                <div id="status-birth-cert"></div>
+            </div>
+
+            <button type="button" onclick="validateAndProceedToPayment()" class="btn-success"
+                style="margin-top: 20px;">Proceed to Payment &rarr;</button>
+            <div id="doc-validation-error"></div>
+        </div>
+
+        <!-- STEP 3: PAYMENT METHOD -->
+        <div id="step-payment" class="wizard-step">
+            <h3>Application Fee Payment</h3>
+            <p style="font-size: 13px; color: #666;">Select your preferred payment option to complete your application.
+            </p>
+
+            <div style="background: #fdfdfe; border: 1px solid #e1e4e8; padding: 20px; border-radius: 6px;">
+                <label for="pay-method">Payment Method:</label>
+                <select id="pay-method">
+                    <option value="gcash">GCash</option>
+                    <option value="debit_card">Debit Card</option>
+                    <option value="credit_card">Credit Card</option>
+                </select>
+
+                <label for="pay-amount">Amount (PHP):</label>
+                <input type="text" id="pay-amount" value="500.00" readonly style="background: #e9ecef;">
+
+                <button type="button" onclick="submitPayment()" class="btn-success">Complete Payment & Submit
+                    Enrollment</button>
+                <div id="payment-result"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000";
+
+        let sessionData = {
+            userId: localStorage.getItem("student_user_id"),
+            fullName: localStorage.getItem("student_name"),
+            applicationId: localStorage.getItem("student_application_id")
+        };
+
+        let uploadedDocs = {
+            reportCard: null,
+            birthCert: null
+        };
+
+        let currentWizardStep = "step-programs";
+
+        window.onload = async function () {
+            if (!sessionData.userId) {
+                alert("Please log in through the Student Portal first.");
+                window.location.href = "index.html";
+                return;
+            }
+            document.getElementById("display-user-badge").innerText = `User: ${sessionData.fullName || sessionData.userId}`;
+
+            // Always load programs list so students can choose or change programs freely
+            await loadProgramsForEnrollment();
+
+            // If an application ID is stored, verify it and sync its uploaded documents
+            if (sessionData.applicationId) {
+                const isValidDraft = await syncExistingApplication(sessionData.applicationId);
+                const urlParams = new URLSearchParams(window.location.search);
+                if (isValidDraft && urlParams.get("resume") === "true") {
+                    if (uploadedDocs.reportCard && uploadedDocs.birthCert) {
+                        showStep("step-payment");
+                    } else {
+                        showStep("step-documents");
+                    }
+                }
+            }
+        };
+
+        async function syncExistingApplication(applicationId) {
+            try {
+                const response = await fetch(`${API_BASE}/applications/${applicationId}`);
+                if (!response.ok) {
+                    clearActiveApplication();
+                    return false;
+                }
+                const appData = await response.json();
+                if (appData.user_id !== sessionData.userId || appData.status !== "draft") {
+                    clearActiveApplication();
+                    return false;
+                }
+
+                document.getElementById("active-app-id").innerText = appData.application_id;
+                uploadedDocs = { reportCard: null, birthCert: null };
+                document.getElementById("status-report-card").innerHTML = "";
+                document.getElementById("status-birth-cert").innerHTML = "";
+
+                if (appData.documents && appData.documents.length > 0) {
+                    appData.documents.forEach(doc => {
+                        if (doc.document_type === "Report Card") {
+                            uploadedDocs.reportCard = doc.file_name;
+                            document.getElementById("status-report-card").innerHTML =
+                                `<p class='success-msg'>Uploaded (${doc.file_name}). Select a new file above only if you wish to replace it.</p>`;
+                        } else if (doc.document_type === "Birth Certificate") {
+                            uploadedDocs.birthCert = doc.file_name;
+                            document.getElementById("status-birth-cert").innerHTML =
+                                `<p class='success-msg'>Uploaded (${doc.file_name}). Select a new file above only if you wish to replace it.</p>`;
+                        }
+                    });
+                }
+                return true;
+            } catch (e) {
+                clearActiveApplication();
+                return false;
+            }
+        }
+
+        function clearActiveApplication() {
+            localStorage.removeItem("student_application_id");
+            sessionData.applicationId = null;
+            uploadedDocs = { reportCard: null, birthCert: null };
+            document.getElementById("active-app-id").innerText = "";
+        }
+
+        function showStep(stepId) {
+            document.querySelectorAll(".wizard-step").forEach(el => el.classList.remove("active"));
+            document.getElementById(stepId).classList.add("active");
+            currentWizardStep = stepId;
+        }
+
+        function undoStep() {
+            if (currentWizardStep === "step-payment") {
+                showStep("step-documents");
+            } else if (currentWizardStep === "step-documents") {
+                showStep("step-programs");
+            } else {
+                window.location.href = "index.html";
+            }
+        }
+
+        async function loadProgramsForEnrollment() {
+            const container = document.getElementById("programs-list-container");
+            container.innerHTML = "<p>Loading active programs...</p>";
+
+            try {
+                const response = await fetch(`${API_BASE}/programs/`);
+                if (!response.ok) throw new Error("Failed to load programs.");
+                const programs = await response.json();
+
+                if (programs.length === 0) {
+                    container.innerHTML = "<p style='color: #666;'>No active academic programs available at the moment.</p>";
+                    return;
+                }
+
+                let html = "";
+                programs.forEach(prog => {
+                    html += `
+                        <div class="program-card">
+                            <div>
+                                <h4 style="margin: 0 0 5px 0; color: #004080;">${prog.course_name}</h4>
+                                <span style="font-size: 13px; color: #666;">Academic Year: <strong>${prog.academic_year}</strong></span>
+                            </div>
+                            <button type="button" onclick="joinProgram('${prog.course_id}')" style="width: auto; margin-top: 0;">Join</button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+            } catch (error) {
+                container.innerHTML = `<p class='error-msg'>Error: ${error.message}</p>`;
+            }
+        }
+
+        async function joinProgram(courseId) {
+            const errorDiv = document.getElementById("program-error");
+            errorDiv.innerText = "";
+
+            try {
+                const payload = {
+                    user_id: sessionData.userId,
+                    course_id: courseId
+                };
+                if (sessionData.applicationId) {
+                    payload.application_id = sessionData.applicationId;
+                }
+
+                const response = await fetch(`${API_BASE}/applications/`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || "Failed to create application.");
+                }
+
+                const data = await response.json();
+                sessionData.applicationId = data.application_id;
+                localStorage.setItem("student_application_id", data.application_id);
+                document.getElementById("active-app-id").innerText = data.application_id;
+
+                // Clear file inputs and sync existing uploaded documents for this draft
+                document.getElementById("file-report-card").value = "";
+                document.getElementById("file-birth-cert").value = "";
+                document.getElementById("doc-validation-error").innerHTML = "";
+                await syncExistingApplication(data.application_id);
+
+                showStep("step-documents");
+
+            } catch (error) {
+                errorDiv.innerText = "Error: " + error.message;
+            }
+        }
+
+        async function uploadSingleFile(docType, file, statusDivId) {
+            const statusDiv = document.getElementById(statusDivId);
+            const formData = new FormData();
+            formData.append("application_id", sessionData.applicationId);
+            formData.append("document_type", docType);
+            formData.append("file", file);
+
+            statusDiv.innerHTML = "<p style='color: #666;'>Uploading...</p>";
+            const response = await fetch(`${API_BASE}/documents/upload`, {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                let errorMsg = `Failed to upload ${docType}.`;
+                try {
+                    const err = await response.json();
+                    if (typeof err.detail === "string") {
+                        errorMsg = err.detail;
+                    } else if (Array.isArray(err.detail)) {
+                        errorMsg = err.detail.map(e => typeof e === 'string' ? e : (e.msg || JSON.stringify(e))).join(', ');
+                    } else if (err.detail && typeof err.detail === 'object') {
+                        errorMsg = err.detail.msg || JSON.stringify(err.detail);
+                    }
+                } catch (e) {
+                    const textErr = await response.text();
+                    if (textErr) errorMsg = textErr;
+                }
+                throw new Error(errorMsg);
+            }
+
+            const data = await response.json();
+            if (docType === "Report Card") {
+                uploadedDocs.reportCard = data.file_name;
+                document.getElementById("file-report-card").value = "";
+            } else if (docType === "Birth Certificate") {
+                uploadedDocs.birthCert = data.file_name;
+                document.getElementById("file-birth-cert").value = "";
+            }
+            statusDiv.innerHTML = `<p class='success-msg'>Uploaded successfully (${data.file_name})!</p>`;
+            return true;
+        }
+
+        async function validateAndProceedToPayment() {
+            const errorDiv = document.getElementById("doc-validation-error");
+            errorDiv.innerText = "";
+
+            const reportCardInput = document.getElementById("file-report-card");
+            const birthCertInput = document.getElementById("file-birth-cert");
+
+            if (!sessionData.applicationId) {
+                errorDiv.innerHTML = "<p class='error-msg'>Application ID not found. Please go back and select a program first.</p>";
+                return;
+            }
+
+            const hasNewReportCard = reportCardInput.files.length > 0;
+            const hasNewBirthCert = birthCertInput.files.length > 0;
+
+            if ((!hasNewReportCard && !uploadedDocs.reportCard) || (!hasNewBirthCert && !uploadedDocs.birthCert)) {
+                errorDiv.innerHTML = "<p class='error-msg'>Please provide both required documents (Report Card and Birth Certificate).</p>";
+                return;
+            }
+
+            try {
+                const uploadTasks = [];
+                if (hasNewReportCard) {
+                    uploadTasks.push(uploadSingleFile("Report Card", reportCardInput.files[0], "status-report-card"));
+                }
+                if (hasNewBirthCert) {
+                    uploadTasks.push(uploadSingleFile("Birth Certificate", birthCertInput.files[0], "status-birth-cert"));
+                }
+
+                if (uploadTasks.length > 0) {
+                    errorDiv.innerHTML = "<p style='color: #666;'>Uploading documents...</p>";
+                    await Promise.all(uploadTasks);
+                }
+
+                errorDiv.innerHTML = "";
+                showStep("step-payment");
+
+            } catch (error) {
+                // If the backend indicates application ID is missing, clear storage and prompt re-selection
+                if (error.message.includes("Application ID not found")) {
+                    clearActiveApplication();
+                }
+                errorDiv.innerHTML = `<p class='error-msg'>Error: ${error.message}</p>`;
+            }
+        }
+
+        async function submitPayment() {
+            const method = document.getElementById("pay-method").value;
+            const resultDiv = document.getElementById("payment-result");
+            resultDiv.innerHTML = "";
+
+            try {
+                const response = await fetch(`${API_BASE}/payments/`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        application_id: sessionData.applicationId,
+                        amount: 500.00,
+                        payment_method: method
+                    })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    let errorMsg = "Payment processing failed.";
+
+                    if (typeof err.detail === "string") {
+                        errorMsg = err.detail;
+                    } else if (Array.isArray(err.detail)) {
+                        errorMsg = err.detail.map(e => typeof e === 'string' ? e : (e.msg || JSON.stringify(e))).join(', ');
+                    } else if (err.detail && typeof err.detail === 'object') {
+                        errorMsg = err.detail.msg || JSON.stringify(err.detail);
+                    }
+
+                    throw new Error(errorMsg);
+                }
+
+                const data = await response.json();
+                resultDiv.innerHTML = `<p class='success-msg'>Payment successful! Reference No: <strong>${data.reference_number}</strong>. Redirecting to your dashboard...</p>`;
+
+                // Clear application session upon successful payment completion
+                localStorage.removeItem("student_application_id");
+
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 1500);
+
+            } catch (error) {
+                resultDiv.innerHTML = `<p class='error-msg'>Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+
+</body>
+
+</html>

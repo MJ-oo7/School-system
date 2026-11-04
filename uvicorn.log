@@ -1,0 +1,26 @@
+INFO:     Started server process [22549]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:58696 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41832 - "POST /users/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:41844 - "POST /programs/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:47240 - "OPTIONS /users/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47246 - "POST /users/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47246 - "GET /users/USER-9664569F/applications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47246 - "GET /programs/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47246 - "OPTIONS /applications/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47240 - "POST /applications/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:47240 - "POST /documents/upload HTTP/1.1" 201 Created
+INFO:     127.0.0.1:47246 - "POST /documents/upload HTTP/1.1" 201 Created
+INFO:     127.0.0.1:36794 - "POST /users/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:36808 - "GET /users/login HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:36824 - "OPTIONS /users/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36828 - "POST /users/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36828 - "GET /users/USER-5D28406D/applications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36828 - "GET /programs/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36828 - "OPTIONS /applications/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36824 - "POST /applications/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:39576 - "GET /programs/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39576 - "POST /documents/upload HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:39578 - "POST /documents/upload HTTP/1.1" 404 Not Found
