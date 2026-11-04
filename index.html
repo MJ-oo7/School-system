@@ -4,52 +4,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital School Enrollment Portal - Student</title>
+    <title>Academic Portal & Admissions Suite — Student Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap"
+        rel="stylesheet">
     <style>
+        :root {
+            --surface: #F8FAFC;
+            --surface-lowest: #FFFFFF;
+            --surface-low: #F1F5F9;
+            --surface-container: #E2E8F0;
+            --on-surface: #0F172A;
+            --on-surface-variant: #475569;
+            --outline: #64748B;
+            --outline-variant: #CBD5E1;
+            --primary: #0F294A;
+            --primary-hover: #1B365D;
+            --primary-deep: #00142F;
+            --primary-fixed: #D5E3FF;
+            --accent: #D97706;
+            --accent-hover: #B45309;
+            --accent-light: #FEF3C7;
+            --error: #BA1A1A;
+            --error-bg: #FFF1F2;
+            --error-border: #FECDD3;
+            --error-text: #BE123C;
+            --success-bg: #ECFDF5;
+            --success-border: #A7F3D0;
+            --success-text: #047857;
+            --shadow-layer-1: 0 1px 3px 0 rgba(15, 41, 74, 0.04), 0 1px 2px -1px rgba(15, 41, 74, 0.02);
+            --shadow-layer-2: 0 4px 6px -1px rgba(15, 41, 74, 0.07), 0 2px 4px -2px rgba(15, 41, 74, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--surface);
+            color: var(--on-surface);
             margin: 0;
-            padding: 20px;
-            color: #333;
+            padding: 0;
+            font-size: 14px;
+            line-height: 20px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 850px;
+        /* Institutional Top Navigation Header */
+        .institutional-navbar {
+            background-color: var(--primary);
+            border-bottom: 3px solid var(--accent);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            box-shadow: var(--shadow-layer-2);
+        }
+
+        .navbar-inner {
+            max-width: 1200px;
             margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+        }
+
+        .brand-identity {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-crest {
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(254, 147, 44, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: #FE932C;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-titles {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-super {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #B0C8F1;
+            line-height: 14px;
         }
 
         h1 {
-            color: #004080;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 28px;
+            letter-spacing: -0.015em;
+            color: #FFFFFF;
             margin: 0;
-        }
-
-        h3 {
-            color: #003366;
-            border-bottom: 2px solid #004080;
-            padding-bottom: 5px;
         }
 
         .admin-link {
             text-decoration: none;
-            color: #800000;
-            font-weight: bold;
-            font-size: 14px;
+            color: #FFFFFF;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            padding: 8px 14px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.01em;
+            transition: all 0.15s ease;
         }
 
         .admin-link:hover {
-            text-decoration: underline;
+            background-color: rgba(255, 255, 255, 0.16);
+            border-color: #FE932C;
+        }
+
+        /* Main Layout Container */
+        .container {
+            max-width: 1120px;
+            margin: 32px auto;
+            padding: 0 24px 48px 24px;
+        }
+
+        h2 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 36px;
+            letter-spacing: -0.015em;
+            color: var(--primary);
+            margin: 0 0 8px 0;
+        }
+
+        h3 {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 28px;
+            color: var(--primary);
+            margin: 0 0 16px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--surface-container);
         }
 
         .view-section {
@@ -60,126 +170,325 @@
             display: block;
         }
 
+        /* Auth Grid */
+        .auth-intro {
+            background: var(--surface-lowest);
+            border: 1px solid var(--surface-container);
+            border-left: 3px solid var(--accent);
+            border-radius: 6px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-layer-1);
+        }
+
         .auth-container {
-            display: flex;
-            gap: 30px;
-            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                grid-template-columns: 1fr;
+            }
         }
 
         .auth-box {
-            flex: 1;
-            background: #fdfdfe;
-            border: 1px solid #e1e4e8;
-            padding: 20px;
-            border-radius: 6px;
+            background: var(--surface-lowest);
+            border: 1px solid var(--surface-container);
+            padding: 28px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-layer-1);
+            display: flex;
+            flex-direction: column;
         }
 
-        .section {
-            margin-top: 20px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e1e4e8;
+        .section-card {
+            background: var(--surface-lowest);
+            border: 1px solid var(--surface-container);
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-layer-1);
+            margin-top: 24px;
         }
 
-        button {
-            background-color: #004080;
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            width: 100%;
-        }
-
-        button:hover {
-            background-color: #003366;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-
-        .btn-resume {
-            background-color: #28a745;
-            width: auto;
-            padding: 5px 12px;
+        /* Form Controls */
+        label {
+            display: block;
+            font-weight: 600;
             font-size: 12px;
-            font-weight: bold;
-        }
-
-        .btn-resume:hover {
-            background-color: #218838;
+            line-height: 16px;
+            letter-spacing: 0.02em;
+            color: var(--on-surface-variant);
+            margin-bottom: 6px;
+            text-transform: uppercase;
         }
 
         input,
         select {
-            padding: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            padding: 10px 12px;
             width: 100%;
-            margin: 6px 0 14px 0;
-            border: 1px solid #ccc;
+            margin: 0 0 16px 0;
+            border: 1px solid var(--outline-variant);
             border-radius: 4px;
-            box-sizing: border-box;
+            background-color: var(--surface-lowest);
+            color: var(--on-surface);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
-        label {
-            font-weight: bold;
-            font-size: 13px;
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 41, 74, 0.1);
         }
 
-        .status-card {
-            background: #fdfdfe;
-            border: 1px solid #cbd5e1;
-            padding: 20px;
-            border-radius: 6px;
-            margin-top: 15px;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
+        /* Buttons */
+        button {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            border: 1px solid transparent;
+            padding: 10px 18px;
             border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            width: 100%;
+            transition: background-color 0.15s ease, transform 0.05s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-accent {
+            background-color: var(--accent);
+            color: #FFFFFF;
+        }
+
+        .btn-accent:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--surface-lowest);
+            color: var(--primary);
+            border: 1px solid var(--outline-variant);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--surface-low);
+        }
+
+        .btn-resume {
+            background-color: var(--accent);
+            color: #FFFFFF;
+            width: auto;
+            padding: 6px 14px;
             font-size: 12px;
-            font-weight: bold;
-            color: white;
-            display: inline-block;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+
+        .btn-resume:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Candidate Session Strip */
+        .candidate-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface-lowest);
+            padding: 18px 24px;
+            border-radius: 8px;
+            border: 1px solid var(--surface-container);
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--shadow-layer-1);
+        }
+
+        .candidate-id-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface-low);
+            border: 1px solid var(--outline-variant);
+            color: var(--on-surface-variant);
+            padding: 2px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Enrollment Wizard Call-to-Action Card */
+        .wizard-cta-card {
+            background: linear-gradient(135deg, #0F294A 0%, #1B365D 100%);
+            color: #FFFFFF;
+            border: 1px solid var(--primary);
+            padding: 28px 32px;
+            border-radius: 8px;
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            box-shadow: var(--shadow-layer-2);
+        }
+
+        @media (max-width: 720px) {
+            .wizard-cta-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        .wizard-cta-card h3 {
+            color: #FFFFFF;
+            border: none;
+            margin: 0 0 6px 0;
+            padding: 0;
+            font-size: 22px;
+        }
+
+        .wizard-cta-card p {
+            color: #D5E3FF;
+            margin: 0;
+            font-size: 14px;
+            max-width: 560px;
+        }
+
+        .wizard-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--accent);
+            color: #FFFFFF;
+            padding: 12px 22px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+            transition: background-color 0.15s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .wizard-cta-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        .data-table th {
+            background-color: var(--surface-low);
+            color: var(--on-surface-variant);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            text-align: left;
+            padding: 12px 16px;
+            border-top: 1px solid var(--surface-container);
+            border-bottom: 1px solid var(--surface-container);
+        }
+
+        .data-table td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--on-surface);
+            border-bottom: 1px solid var(--surface-container);
+            vertical-align: middle;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: var(--surface);
+        }
+
+        /* Semantic Status Badges (Pill Radius) */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 14px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .status-draft {
-            background-color: #ffc107;
-            color: #333;
+            background-color: #F1F5F9;
+            color: #475569;
+            border: 1px solid #CBD5E1;
         }
 
-        .status-submitted {
-            background-color: #007bff;
-        }
-
+        .status-submitted,
         .status-under_review {
-            background-color: #17a2b8;
+            background-color: #E0F2FE;
+            color: #0369A1;
+            border: 1px solid #BAE6FD;
+        }
+
+        .status-under_review::before,
+        .status-submitted::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #0284C7;
+            display: inline-block;
         }
 
         .status-approved {
-            background-color: #28a745;
+            background-color: #ECFDF5;
+            color: #047857;
+            border: 1px solid #A7F3D0;
+        }
+
+        .status-approved::before {
+            content: "✓";
+            font-weight: 700;
         }
 
         .status-rejected {
-            background-color: #dc3545;
+            background-color: #FFF1F2;
+            color: #BE123C;
+            border: 1px solid #FECDD3;
         }
 
+        /* Feedback Messages */
         .success-msg {
-            color: #28a745;
-            font-weight: bold;
-            margin-top: 10px;
+            background-color: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-text);
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-top: 12px;
             font-size: 13px;
         }
 
         .error-msg {
-            color: #d9534f;
-            font-weight: bold;
-            margin-top: 10px;
+            background-color: var(--error-bg);
+            border: 1px solid var(--error-border);
+            color: var(--error-text);
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-top: 12px;
             font-size: 13px;
         }
     </style>
@@ -187,47 +496,68 @@
 
 <body>
 
-    <div class="container">
-        <div class="header-bar">
-            <h1>Student Portal</h1>
-            <a href="admin.html" class="admin-link">Staff / Admin Login &rarr;</a>
+    <!-- Institutional Top Header -->
+    <header class="institutional-navbar">
+        <div class="navbar-inner">
+            <div class="brand-identity">
+                <div class="brand-crest">AP</div>
+                <div class="brand-titles">
+                    <span class="brand-super">Office of Undergraduate &amp; Graduate Admissions</span>
+                    <h1>Academic Portal &amp; Admissions Suite</h1>
+                </div>
+            </div>
+            <a href="admin.html" class="admin-link" id="admin-portal-link">Faculty &amp; Admissions Officer Portal &rarr;</a>
         </div>
+    </header>
+
+    <main class="container">
 
         <!-- VIEW 1: AUTHENTICATION (LOGIN / REGISTER) -->
         <div id="auth-view" class="view-section active">
-            <p style="color: #666;">Welcome! Please sign in or create a new account to access your student enrollment
-                dashboard.</p>
+            <div class="auth-intro">
+                <h2>Candidate Admissions Portal</h2>
+                <p style="color: var(--on-surface-variant); margin: 0; font-size: 15px;">
+                    Welcome to the Digital School Enrollment System. Sign in with your registered credentials or create a
+                    prospective student dossier to begin your academic program application.
+                </p>
+            </div>
 
             <div class="auth-container">
                 <!-- Login Box -->
                 <div class="auth-box">
-                    <h3>Student Sign In</h3>
-                    <label for="login-email">Email Address:</label>
-                    <input type="email" id="login-email" placeholder="student@example.com">
+                    <h3>Candidate Sign In</h3>
+                    <p style="color: var(--on-surface-variant); font-size: 13px; margin: -6px 0 18px 0;">
+                        Access your active applications, uploaded transcripts, and admission decisions.
+                    </p>
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" placeholder="student@university.edu">
 
-                    <label for="login-password">Password:</label>
-                    <input type="password" id="login-password" placeholder="Enter password">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password">
 
-                    <button onclick="loginStudent()">Log In</button>
+                    <button onclick="loginStudent()" style="margin-top: 4px;">Sign In to Portal</button>
                     <div id="login-result"></div>
                 </div>
 
                 <!-- Registration Box -->
                 <div class="auth-box">
-                    <h3>Create Account</h3>
-                    <label for="reg-fullname">Full Name:</label>
-                    <input type="text" id="reg-fullname" placeholder="Student name">
+                    <h3>Create Prospective Student Account</h3>
+                    <p style="color: var(--on-surface-variant); font-size: 13px; margin: -6px 0 18px 0;">
+                        New applicants receive an official Candidate ID immediately upon registration.
+                    </p>
+                    <label for="reg-fullname">Full Legal Name</label>
+                    <input type="text" id="reg-fullname" placeholder="e.g., Juan Dela Cruz">
 
-                    <label for="reg-email">Email Address:</label>
+                    <label for="reg-email">Institutional or Personal Email</label>
                     <input type="email" id="reg-email" placeholder="student@example.com">
 
-                    <label for="reg-password">Password:</label>
-                    <input type="password" id="reg-password" placeholder="At least 6 characters">
+                    <label for="reg-password">Create Password</label>
+                    <input type="password" id="reg-password" placeholder="Minimum 6 characters">
 
-                    <label for="reg-phone">Phone Number (Optional):</label>
+                    <label for="reg-phone">Contact Number (Optional)</label>
                     <input type="text" id="reg-phone" placeholder="09123456789">
 
-                    <button onclick="registerStudent()">Create Account</button>
+                    <button onclick="registerStudent()" class="btn-accent" style="margin-top: 4px;">Register Candidate Account</button>
                     <div id="reg-result"></div>
                 </div>
             </div>
@@ -235,44 +565,56 @@
 
         <!-- VIEW 2: STUDENT DASHBOARD -->
         <div id="dashboard-view" class="view-section">
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 12px 15px; border-radius: 6px; border: 1px solid #e1e4e8;">
+            <div class="candidate-banner">
                 <div>
-                    <span id="welcome-user-text" style="font-weight: bold; font-size: 16px; color: #004080;">Welcome,
-                        Student</span>
-                    <div style="font-size: 12px; color: #666; margin-top: 2px;">ID: <span id="session-user-id"></span>
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--on-surface-variant);">
+                        Authenticated Candidate Dossier
+                    </div>
+                    <div id="welcome-user-text"
+                        style="font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 24px; line-height: 32px; color: var(--primary); margin-top: 2px;">
+                        Welcome, Student
+                    </div>
+                    <div class="candidate-id-chip">
+                        Candidate ID: <strong id="session-user-id" style="color: var(--primary);"></strong>
                     </div>
                 </div>
-                <button onclick="logoutStudent()" class="btn-secondary" style="width: auto; padding: 6px 14px;">Log
-                    Out</button>
+                <button onclick="logoutStudent()" class="btn-secondary" style="width: auto; padding: 8px 16px;">Sign Out</button>
             </div>
 
             <!-- ENROLLMENT WIZARD LINK CARD -->
-            <div
-                style="background: #e6f0fa; border: 1px solid #b8d0ee; padding: 20px; border-radius: 6px; margin-top: 25px; text-align: center;">
-                <h3 style="margin-top: 0; color: #004080; border: none;">Ready to Enroll in a Program?</h3>
-                <p style="font-size: 13px; color: #555;">Browse available programs, upload academic documents, and pay
-                    your application fee.</p>
-                <a href="enroll.html" onclick="startNewEnrollment(event)"
-                    style="display: inline-block; background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px;">Start
-                    Enrollment Wizard &rarr;</a>
+            <div class="wizard-cta-card">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #FE932C; margin-bottom: 4px;">
+                        Academic Year Admissions Open
+                    </div>
+                    <h3>Ready to Enroll in an Academic Program?</h3>
+                    <p>Select your degree program, submit your academic transcripts and birth certificate, and complete
+                        your application deposit via our guided admissions wizard.</p>
+                </div>
+                <a href="enroll.html" onclick="startNewEnrollment(event)" class="wizard-cta-btn">
+                    Start Enrollment Wizard &rarr;
+                </a>
             </div>
 
             <!-- MY APPLICATIONS LIST SECTION -->
-            <div class="section" style="margin-top: 30px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="border: none; margin: 0; padding: 0;">My Applications</h3>
-                    <button onclick="loadStudentApplications()"
-                        style="width: auto; padding: 6px 14px; margin-top: 0;">Refresh List</button>
+            <div class="section-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div>
+                        <h3 style="border: none; margin: 0; padding: 0;">Submitted &amp; Draft Applications</h3>
+                        <p style="font-size: 13px; color: var(--on-surface-variant); margin: 4px 0 0 0;">
+                            Track real-time admissions review statuses or resume an unfinished draft dossier.
+                        </p>
+                    </div>
+                    <button onclick="loadStudentApplications()" class="btn-secondary"
+                        style="width: auto; padding: 8px 14px;">&#8635; Refresh Status</button>
                 </div>
-                <p style="font-size: 13px; color: #666;">View all program applications you have submitted or resume an unfinished draft.</p>
 
-                <div id="applications-table-container">
-                    <p style="color: #666; font-size: 13px;">Loading your applications...</p>
+                <div id="applications-table-container" style="margin-top: 16px;">
+                    <p style="color: var(--on-surface-variant); font-size: 13px;">Loading your applications...</p>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
 
@@ -298,13 +640,16 @@
         function switchView(viewName) {
             document.getElementById("auth-view").classList.remove("active");
             document.getElementById("dashboard-view").classList.remove("active");
+            const adminLink = document.getElementById("admin-portal-link");
 
             if (viewName === "dashboard") {
+                if (adminLink) adminLink.style.display = "none";
                 document.getElementById("dashboard-view").classList.add("active");
                 document.getElementById("welcome-user-text").innerText = `Welcome, ${currentStudent.fullName}`;
                 document.getElementById("session-user-id").innerText = currentStudent.userId;
                 loadStudentApplications();
             } else {
+                if (adminLink) adminLink.style.display = "inline-block";
                 document.getElementById("auth-view").classList.add("active");
             }
         }
@@ -312,39 +657,45 @@
         function startNewEnrollment(event) {
             event.preventDefault();
             localStorage.removeItem("student_application_id");
+            sessionStorage.removeItem("enrollment_wizard_step");
             window.location.href = "enroll.html";
         }
 
         function resumeApplication(applicationId) {
             localStorage.setItem("student_application_id", applicationId);
+            sessionStorage.removeItem("enrollment_wizard_step");
             window.location.href = "enroll.html?resume=true";
         }
 
         async function loadStudentApplications() {
             const container = document.getElementById("applications-table-container");
-            container.innerHTML = "<p style='color: #666; font-size: 13px;'>Loading your applications...</p>";
+            container.innerHTML = "<p style='color: var(--on-surface-variant); font-size: 13px;'>Loading your applications...</p>";
 
             try {
                 const response = await fetch(`${API_BASE}/users/${currentStudent.userId}/applications`);
+                if (response.status === 404) {
+                    logoutStudent();
+                    return;
+                }
                 if (!response.ok) {
                     throw new Error("Failed to load applications.");
                 }
                 const applications = await response.json();
 
                 if (applications.length === 0) {
-                    container.innerHTML = "<p style='color: #666; font-size: 13px;'>You haven't submitted any applications yet. Click 'Start Enrollment Wizard' above to apply!</p>";
+                    container.innerHTML = "<p style='color: var(--on-surface-variant); font-size: 13px; padding: 12px 0;'>You haven't submitted any applications yet. Click <strong>Start Enrollment Wizard</strong> above to begin your application.</p>";
                     return;
                 }
 
                 let html = `
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <table class="data-table">
                         <thead>
-                            <tr style="background-color: #004080; color: white;">
-                                <th style="padding: 8px; font-size: 13px; border: 1px solid #ddd;">Application ID</th>
-                                <th style="padding: 8px; font-size: 13px; border: 1px solid #ddd;">Course ID</th>
-                                <th style="padding: 8px; font-size: 13px; border: 1px solid #ddd;">Status</th>
-                                <th style="padding: 8px; font-size: 13px; border: 1px solid #ddd;">Date Submitted</th>
-                                <th style="padding: 8px; font-size: 13px; border: 1px solid #ddd;">Action</th>
+                            <tr>
+                                <th>Application ID</th>
+                                <th>Program / Course ID</th>
+                                <th>Admissions Status</th>
+                                <th>Date Initiated</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -352,19 +703,24 @@
 
                 applications.forEach(app => {
                     let badgeClass = `status-badge status-${app.status}`;
-                    let dateStr = app.created_at ? new Date(app.created_at).toLocaleDateString() : "N/A";
-                    let actionHtml = `<span style="color: #666; font-size: 12px;">Submitted</span>`;
+                    let statusLabel = app.status.replace("_", " ").toUpperCase();
+                    let dateStr = app.created_at ? new Date(app.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : "N/A";
+                    let actionHtml = `<span style="color: var(--on-surface-variant); font-size: 12px; font-weight: 500;">Dossier Submitted</span>`;
                     if (app.status === "draft") {
-                        actionHtml = `<button class="btn-resume" onclick="resumeApplication('${app.application_id}')">Resume Draft &rarr;</button>`;
+                        actionHtml = `<button class="btn-resume" onclick="resumeApplication('${app.application_id}')">Resume Application &rarr;</button>`;
+                    } else if (app.status === "approved") {
+                        actionHtml = `<span style="color: #047857; font-size: 12px; font-weight: 600;">Admission Granted</span>`;
+                    } else if (app.status === "rejected") {
+                        actionHtml = `<span style="color: #BE123C; font-size: 12px; font-weight: 600;">Decision Finalized</span>`;
                     }
 
                     html += `
                         <tr>
-                            <td style="padding: 8px; font-size: 13px; border: 1px solid #ddd;"><strong>${app.application_id}</strong></td>
-                            <td style="padding: 8px; font-size: 13px; border: 1px solid #ddd;">${app.course_id}</td>
-                            <td style="padding: 8px; font-size: 13px; border: 1px solid #ddd;"><span class="${badgeClass}">${app.status.toUpperCase()}</span></td>
-                            <td style="padding: 8px; font-size: 13px; border: 1px solid #ddd;">${dateStr}</td>
-                            <td style="padding: 8px; font-size: 13px; border: 1px solid #ddd;">${actionHtml}</td>
+                            <td><strong style="color: var(--primary); font-family: 'Inter', monospace;">${app.application_id}</strong></td>
+                            <td><span style="font-weight: 600;">${app.course_id}</span></td>
+                            <td><span class="${badgeClass}">${statusLabel}</span></td>
+                            <td style="color: var(--on-surface-variant);">${dateStr}</td>
+                            <td>${actionHtml}</td>
                         </tr>
                     `;
                 });
@@ -469,6 +825,7 @@
             localStorage.removeItem("student_user_id");
             localStorage.removeItem("student_name");
             localStorage.removeItem("student_application_id");
+            sessionStorage.removeItem("enrollment_wizard_step");
             document.getElementById("login-email").value = "";
             document.getElementById("login-password").value = "";
             switchView("auth");
