@@ -56,16 +56,22 @@ def seed_default_admin():
 
 seed_default_admin()
 
-# 3. Directory setup for uploads (resolved relative to this file)
+# 3. Directory setup for uploads and frontend static assets (resolved relative to this file)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+CSS_DIR = os.path.join(BASE_DIR, "css")
+JS_DIR = os.path.join(BASE_DIR, "js")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(CSS_DIR, exist_ok=True)
+os.makedirs(JS_DIR, exist_ok=True)
 
 ALLOWED_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png", ".doc", ".docx"}
 MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024  # 10 MB
 
-# Mount uploads directory so admins can view uploaded documents
+# Mount uploads, css, and js directories
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+app.mount("/css", StaticFiles(directory=CSS_DIR), name="css")
+app.mount("/js", StaticFiles(directory=JS_DIR), name="js")
 
 # Enable CORS for frontend connection
 app.add_middleware(
