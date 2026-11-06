@@ -4,570 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Portal & Admissions Suite — Admissions Officer Dashboard</title>
+    <title>Academic Portal &amp; Admissions Suite — Admissions Officer Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap"
         rel="stylesheet">
-    <script>
-        // Prevent VS Code Live Server from force-reloading the page when database
-        // or log files change inside the project folder.
-        (function () {
-            const OriginalWebSocket = window.WebSocket;
-            if (!OriginalWebSocket) return;
-            window.WebSocket = function (url, protocols) {
-                const ws = protocols ? new OriginalWebSocket(url, protocols) : new OriginalWebSocket(url);
-                if (typeof url === "string" && url.includes("/ws")) {
-                    ws.addEventListener("message", function (event) {
-                        if (event.data === "reload") {
-                            event.stopImmediatePropagation();
-                        }
-                    }, true);
-                    let customOnMessage = null;
-                    Object.defineProperty(ws, "onmessage", {
-                        get: function () { return customOnMessage; },
-                        set: function (fn) {
-                            customOnMessage = function (event) {
-                                if (event.data === "reload") return;
-                                return fn.apply(this, arguments);
-                            };
-                            ws.addEventListener("message", customOnMessage);
-                        }
-                    });
-                }
-                return ws;
-            };
-            window.WebSocket.prototype = OriginalWebSocket.prototype;
-            window.WebSocket.CONNECTING = OriginalWebSocket.CONNECTING;
-            window.WebSocket.OPEN = OriginalWebSocket.OPEN;
-            window.WebSocket.CLOSING = OriginalWebSocket.CLOSING;
-            window.WebSocket.CLOSED = OriginalWebSocket.CLOSED;
-        })();
-    </script>
-    <style>
-        :root {
-            --surface: #F8FAFC;
-            --surface-lowest: #FFFFFF;
-            --surface-low: #F1F5F9;
-            --surface-container: #E2E8F0;
-            --on-surface: #0F172A;
-            --on-surface-variant: #475569;
-            --outline: #64748B;
-            --outline-variant: #CBD5E1;
-            --primary: #0F294A;
-            --primary-hover: #1B365D;
-            --accent: #D97706;
-            --accent-hover: #B45309;
-            --error-bg: #FFF1F2;
-            --error-border: #FECDD3;
-            --error-text: #BE123C;
-            --success-bg: #ECFDF5;
-            --success-border: #A7F3D0;
-            --success-text: #047857;
-            --shadow-layer-1: 0 1px 3px 0 rgba(15, 41, 74, 0.04), 0 1px 2px -1px rgba(15, 41, 74, 0.02);
-            --shadow-layer-2: 0 4px 6px -1px rgba(15, 41, 74, 0.07), 0 2px 4px -2px rgba(15, 41, 74, 0.04);
-            --shadow-layer-3: -4px 0 24px 0 rgba(15, 41, 74, 0.12);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--surface);
-            color: var(--on-surface);
-            margin: 0;
-            padding: 0;
-            font-size: 14px;
-            line-height: 20px;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Institutional Top Navigation Header */
-        .institutional-navbar {
-            background-color: var(--primary);
-            border-bottom: 3px solid var(--accent);
-            color: #FFFFFF;
-            padding: 16px 32px;
-            box-shadow: var(--shadow-layer-2);
-        }
-
-        .navbar-inner {
-            max-width: 1360px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand-identity {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .brand-crest {
-            width: 38px;
-            height: 38px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(254, 147, 44, 0.45);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Source Serif 4', Georgia, serif;
-            font-weight: 700;
-            font-size: 18px;
-            color: #FE932C;
-        }
-
-        .brand-super {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: #B0C8F1;
-            display: block;
-        }
-
-        h1 {
-            font-family: 'Source Serif 4', Georgia, serif;
-            font-size: 22px;
-            font-weight: 600;
-            color: #FFFFFF;
-            margin: 0;
-        }
-
-        .nav-link {
-            text-decoration: none;
-            color: #FFFFFF;
-            background-color: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.22);
-            padding: 8px 14px;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 13px;
-            transition: all 0.15s ease;
-        }
-
-        .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.16);
-            border-color: #FE932C;
-        }
-
-        /* Main Container (1440px max-width spec) */
-        .container {
-            max-width: 1360px;
-            margin: 32px auto 64px auto;
-            padding: 0 24px;
-        }
-
-        h3 {
-            font-family: 'Source Serif 4', Georgia, serif;
-            font-size: 22px;
-            font-weight: 600;
-            line-height: 30px;
-            color: var(--primary);
-            margin: 0 0 16px 0;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--surface-container);
-        }
-
-        /* Auth Box */
-        .auth-box {
-            background: var(--surface-lowest);
-            border: 1px solid var(--surface-container);
-            border-top: 4px solid var(--primary);
-            padding: 32px;
-            border-radius: 8px;
-            margin: 40px auto;
-            max-width: 440px;
-            box-shadow: var(--shadow-layer-2);
-        }
-
-        /* Officer Session Strip */
-        .officer-banner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--surface-lowest);
-            padding: 18px 24px;
-            border-radius: 8px;
-            border: 1px solid var(--surface-container);
-            border-left: 4px solid var(--accent);
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-layer-1);
-        }
-
-        /* KPI Summary Metrics Grid */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        @media (max-width: 820px) {
-            .metrics-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .metric-card {
-            background: var(--surface-lowest);
-            border: 1px solid var(--surface-container);
-            border-radius: 6px;
-            padding: 16px 20px;
-            box-shadow: var(--shadow-layer-1);
-        }
-
-        .metric-label {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: var(--on-surface-variant);
-            display: block;
-        }
-
-        .metric-value {
-            font-family: 'Source Serif 4', Georgia, serif;
-            font-size: 28px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-top: 4px;
-        }
-
-        /* Admin Section Cards */
-        .admin-section {
-            background: var(--surface-lowest);
-            border: 1px solid var(--surface-container);
-            padding: 24px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-layer-1);
-        }
-
-        /* Form Elements & Buttons */
-        label {
-            font-weight: 600;
-            display: block;
-            font-size: 12px;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-            color: var(--on-surface-variant);
-            margin-bottom: 6px;
-        }
-
-        input,
-        select {
-            font-family: 'Inter', sans-serif;
-            padding: 10px 12px;
-            width: 100%;
-            margin: 0 0 16px 0;
-            border: 1px solid var(--outline-variant);
-            border-radius: 4px;
-            font-size: 14px;
-            color: var(--on-surface);
-            background: var(--surface-lowest);
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(15, 41, 74, 0.1);
-        }
-
-        button {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--primary);
-            color: white;
-            border: 1px solid transparent;
-            padding: 10px 18px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 8px;
-            transition: all 0.15s ease;
-        }
-
-        button:hover {
-            background-color: var(--primary-hover);
-        }
-
-        button:disabled {
-            background-color: var(--surface-low) !important;
-            color: var(--outline) !important;
-            border-color: var(--outline-variant) !important;
-            cursor: not-allowed;
-        }
-
-        .btn-accent {
-            background-color: var(--accent);
-            color: #FFFFFF;
-        }
-
-        .btn-accent:hover {
-            background-color: var(--accent-hover);
-        }
-
-        .btn-secondary {
-            background-color: var(--surface-lowest);
-            color: var(--primary);
-            border: 1px solid var(--outline-variant);
-            width: auto;
-            padding: 7px 14px;
-            margin-top: 0;
-            font-size: 13px;
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--surface-low);
-        }
-
-        .btn-inspect {
-            background-color: var(--surface-lowest);
-            color: var(--primary);
-            border: 1px solid var(--outline-variant);
-            width: auto;
-            padding: 5px 10px;
-            font-size: 12px;
-            margin-top: 0;
-            margin-right: 4px;
-        }
-
-        .btn-inspect:hover {
-            background-color: var(--surface-low);
-            border-color: var(--primary);
-        }
-
-        .btn-approve {
-            background-color: #047857;
-            width: auto;
-            padding: 5px 10px;
-            font-size: 12px;
-            margin-top: 0;
-            margin-right: 4px;
-        }
-
-        .btn-approve:hover {
-            background-color: #065F46;
-        }
-
-        .btn-reject {
-            background-color: #BE123C;
-            width: auto;
-            padding: 5px 10px;
-            font-size: 12px;
-            margin-top: 0;
-        }
-
-        .btn-reject:hover {
-            background-color: #9F1239;
-        }
-
-        /* High-Density Data Table */
-        .table-scroll {
-            overflow-x: auto;
-            border: 1px solid var(--surface-container);
-            border-radius: 6px;
-            margin-top: 12px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            position: sticky;
-            top: 0;
-            background-color: var(--surface-low);
-            color: var(--on-surface-variant);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            padding: 12px 14px;
-            text-align: left;
-            border-bottom: 1px solid var(--surface-container);
-        }
-
-        td {
-            padding: 14px;
-            text-align: left;
-            font-size: 13px;
-            border-bottom: 1px solid var(--surface-container);
-            vertical-align: middle;
-        }
-
-        tbody tr:hover {
-            background-color: var(--surface);
-        }
-
-        /* Semantic Status Badges (Pill Radius) */
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 9999px;
-            font-size: 11px;
-            font-weight: 700;
-            line-height: 14px;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .status-draft {
-            background-color: #F1F5F9;
-            color: #475569;
-            border: 1px solid #CBD5E1;
-        }
-
-        .status-submitted,
-        .status-under_review {
-            background-color: #E0F2FE;
-            color: #0369A1;
-            border: 1px solid #BAE6FD;
-        }
-
-        .status-under_review::before,
-        .status-submitted::before {
-            content: "";
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: #0284C7;
-            display: inline-block;
-        }
-
-        .status-approved {
-            background-color: #ECFDF5;
-            color: #047857;
-            border: 1px solid #A7F3D0;
-        }
-
-        .status-approved::before {
-            content: "✓";
-            font-weight: 700;
-        }
-
-        .status-rejected {
-            background-color: #FFF1F2;
-            color: #BE123C;
-            border: 1px solid #FECDD3;
-        }
-
-        #admin-dashboard {
-            display: none;
-        }
-
-        .error-msg {
-            background-color: var(--error-bg);
-            border: 1px solid var(--error-border);
-            color: var(--error-text);
-            padding: 10px 12px;
-            border-radius: 4px;
-            font-weight: 600;
-            margin-top: 10px;
-            font-size: 13px;
-        }
-
-        .success-msg {
-            background-color: var(--success-bg);
-            border: 1px solid var(--success-border);
-            color: var(--success-text);
-            padding: 10px 12px;
-            border-radius: 4px;
-            font-weight: 600;
-            margin-top: 10px;
-            font-size: 13px;
-        }
-
-        .doc-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            color: var(--primary);
-            background: var(--surface-low);
-            border: 1px solid var(--outline-variant);
-            padding: 3px 8px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 500;
-            margin: 2px 4px 2px 0;
-        }
-
-        .doc-link:hover {
-            background: #E2E8F0;
-            border-color: var(--primary);
-        }
-
-        /* Layer 3: Right-Docked Candidate Dossier Inspection Drawer */
-        .drawer-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 41, 74, 0.4);
-            display: none;
-            z-index: 900;
-        }
-
-        .drawer-backdrop.open {
-            display: block;
-        }
-
-        .inspection-drawer {
-            position: fixed;
-            top: 0;
-            right: -560px;
-            width: 520px;
-            max-width: 92vw;
-            height: 100vh;
-            background: var(--surface-lowest);
-            box-shadow: var(--shadow-layer-3);
-            border-left: 1px solid var(--surface-container);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            transition: right 0.25s ease;
-        }
-
-        .inspection-drawer.open {
-            right: 0;
-        }
-
-        .drawer-header {
-            background: var(--primary);
-            color: #FFFFFF;
-            padding: 20px 24px;
-            border-bottom: 3px solid var(--accent);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .drawer-body {
-            padding: 24px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .drawer-footer {
-            padding: 16px 24px;
-            border-top: 1px solid var(--surface-container);
-            background: var(--surface);
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/admin.js"></script>
 </head>
 
 <body>
@@ -591,7 +35,7 @@
         <!-- AUTHENTICATION GATE -->
         <div class="auth-box" id="auth-section">
             <h3>Officer Authentication</h3>
-            <p style="font-size: 13px; color: var(--on-surface-variant); margin: -6px 0 18px 0;">
+            <p class="auth-subtitle">
                 Authorized admissions staff only. Sign in to review candidate dossiers and publish degree programs.
             </p>
             <label for="admin-id-input">Admin User ID</label>
@@ -608,18 +52,70 @@
         <div id="admin-dashboard">
             <div class="officer-banner">
                 <div>
-                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--on-surface-variant);">
+                    <div class="officer-kicker">
                         Active Officer Session
                     </div>
-                    <div id="welcome-admin-text"
-                        style="font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 22px; color: var(--primary);">
+                    <div id="welcome-admin-text" class="officer-welcome">
                         Welcome, Administrator
                     </div>
-                    <div style="font-size: 12px; color: var(--on-surface-variant); margin-top: 2px;">
-                        Officer ID: <strong id="session-admin-id" style="color: var(--primary);">ADMIN-001</strong>
+                    <div class="officer-id-meta">
+                        Officer ID: <strong id="session-admin-id" class="officer-id-value">ADMIN-001</strong>
                     </div>
                 </div>
-                <button onclick="logoutAdmin()" class="btn-secondary">Log Out</button>
+                <div class="officer-actions">
+                    <button onclick="toggleEnrollPanel()" class="btn-accent btn-enroll-toggle" id="btn-enroll-student">+ Enroll a Student</button>
+                    <button onclick="logoutAdmin()" class="btn-secondary">Log Out</button>
+                </div>
+            </div>
+
+            <!-- ENROLL A STUDENT: CREATE STUDENT ACCOUNT PANEL -->
+            <div class="admin-section enroll-panel" id="enroll-student-panel">
+                <div class="section-header-top">
+                    <div>
+                        <h3 class="section-heading-clean">Create Student Account</h3>
+                        <p class="section-subtext">
+                            Register a prospective student. An official Candidate ID will be generated &mdash; share it
+                            and the login credentials with the student so they can sign in to the Student Portal.
+                        </p>
+                    </div>
+                    <button onclick="toggleEnrollPanel(false)" class="btn-secondary">Close &times;</button>
+                </div>
+
+                <div class="enroll-form-grid">
+                    <div>
+                        <label for="reg-fullname">Full Legal Name</label>
+                        <input type="text" id="reg-fullname" placeholder="e.g., Juan Dela Cruz">
+                    </div>
+                    <div>
+                        <label for="reg-email">Institutional or Personal Email</label>
+                        <input type="email" id="reg-email" placeholder="student@example.com">
+                    </div>
+                    <div>
+                        <label for="reg-password">Initial Password</label>
+                        <input type="password" id="reg-password" placeholder="Minimum 6 characters">
+                    </div>
+                    <div>
+                        <label for="reg-phone">Contact Number (Optional)</label>
+                        <input type="text" id="reg-phone" placeholder="09123456789">
+                    </div>
+                </div>
+
+                <div class="enroll-form-actions">
+                    <button onclick="toggleEnrollPanel(false)" class="btn-secondary btn-cancel">Cancel</button>
+                    <button onclick="registerStudent()" class="btn-accent btn-inline" id="btn-create-student">Create Student Account</button>
+                </div>
+                <div id="reg-result"></div>
+
+                <div class="existing-student-bar">
+                    <div class="existing-student-field">
+                        <label for="existing-student-id">Enroll an Existing Student by Candidate ID</label>
+                        <input type="text" id="existing-student-id" class="input-no-margin" placeholder="e.g., USER-36AB8AE3">
+                    </div>
+                    <button onclick="launchEnrollmentForExistingStudent()" class="btn-inline">
+                        Open Enrollment Wizard &rarr;
+                    </button>
+                </div>
+                <div id="existing-enroll-error"></div>
             </div>
 
             <!-- KPI METRICS ROW -->
@@ -630,45 +126,45 @@
                 </div>
                 <div class="metric-card">
                     <span class="metric-label">Under Review</span>
-                    <div class="metric-value" id="metric-review" style="color: #0369A1;">0</div>
+                    <div class="metric-value metric-review" id="metric-review">0</div>
                 </div>
                 <div class="metric-card">
                     <span class="metric-label">Approved Candidates</span>
-                    <div class="metric-value" id="metric-approved" style="color: #047857;">0</div>
+                    <div class="metric-value metric-approved" id="metric-approved">0</div>
                 </div>
                 <div class="metric-card">
                     <span class="metric-label">Rejected / Draft</span>
-                    <div class="metric-value" id="metric-other" style="color: #64748B;">0</div>
+                    <div class="metric-value metric-other" id="metric-other">0</div>
                 </div>
             </div>
 
             <!-- SECTION 1: Create Academic Programs -->
             <div class="admin-section">
                 <h3>Publish New Academic Program</h3>
-                <div style="display: grid; grid-template-columns: 1fr 2fr 1fr auto; gap: 16px; align-items: end;">
+                <div class="publish-program-grid">
                     <div>
                         <label for="prog-id">Course ID</label>
-                        <input type="text" id="prog-id" placeholder="e.g., BSCS-2026" style="margin-bottom: 0;">
+                        <input type="text" id="prog-id" class="input-no-margin" placeholder="e.g., BSCS-2026">
                     </div>
                     <div>
                         <label for="prog-name">Course / Degree Title</label>
-                        <input type="text" id="prog-name" placeholder="e.g., B.S. in Computer Science" style="margin-bottom: 0;">
+                        <input type="text" id="prog-name" class="input-no-margin" placeholder="e.g., B.S. in Computer Science">
                     </div>
                     <div>
                         <label for="prog-year">Academic Year</label>
-                        <input type="text" id="prog-year" placeholder="e.g., 2026-2027" style="margin-bottom: 0;">
+                        <input type="text" id="prog-year" class="input-no-margin" placeholder="e.g., 2026-2027">
                     </div>
-                    <button onclick="createProgram()" class="btn-accent" style="width: auto; margin-top: 0; padding: 10px 22px;">Publish Program</button>
+                    <button onclick="createProgram()" class="btn-accent btn-inline">Publish Program</button>
                 </div>
                 <div id="prog-result"></div>
             </div>
 
             <!-- SECTION 2: Incoming Student Applications Table -->
             <div class="admin-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div class="section-header-row">
                     <div>
-                        <h3 style="border: none; margin: 0; padding: 0;">Candidate Dossiers &amp; Admissions Queue</h3>
-                        <p style="font-size: 13px; color: var(--on-surface-variant); margin: 4px 0 0 0;">
+                        <h3 class="section-heading-clean">Candidate Dossiers &amp; Admissions Queue</h3>
+                        <p class="section-subtext">
                             Inspect uploaded academic records, verify fee deposits, and issue official admission decisions.
                         </p>
                     </div>
@@ -677,7 +173,7 @@
 
                 <div id="admin-action-feedback"></div>
                 <div id="admin-table-container">
-                    <p style="color: var(--on-surface-variant);">Loading applications...</p>
+                    <p class="muted-text">Loading applications...</p>
                 </div>
             </div>
         </div>
@@ -688,316 +184,16 @@
     <aside class="inspection-drawer" id="inspection-drawer">
         <div class="drawer-header">
             <div>
-                <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #FE932C; display: block;">
+                <span class="drawer-kicker">
                     Candidate Dossier Inspection
                 </span>
-                <h4 id="drawer-app-id" style="margin: 2px 0 0 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 20px;">APP-0000</h4>
+                <h4 id="drawer-app-id" class="drawer-title">APP-0000</h4>
             </div>
-            <button onclick="closeDossierDrawer()" class="btn-secondary" style="background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.25);">Close &times;</button>
+            <button onclick="closeDossierDrawer()" class="btn-secondary btn-drawer-close">Close &times;</button>
         </div>
         <div class="drawer-body" id="drawer-body-content"></div>
         <div class="drawer-footer" id="drawer-footer-actions"></div>
     </aside>
-
-    <script>
-        const API_BASE = "http://127.0.0.1:8000";
-        let cachedApplications = [];
-
-        function showAdminDashboard(adminId, fullName) {
-            document.getElementById("back-to-student-link").style.display = "none";
-            document.getElementById("auth-section").style.display = "none";
-            document.getElementById("admin-dashboard").style.display = "block";
-            document.getElementById("welcome-admin-text").innerText = `Welcome, ${fullName || "Administrator"}`;
-            document.getElementById("session-admin-id").innerText = adminId || "ADMIN-001";
-            fetchAllApplications();
-        }
-
-        window.onload = function () {
-            if (sessionStorage.getItem("admin_authenticated") === "true") {
-                const savedId = sessionStorage.getItem("admin_user_id") || "ADMIN-001";
-                const savedName = sessionStorage.getItem("admin_full_name") || "System Administrator";
-                showAdminDashboard(savedId, savedName);
-            }
-        };
-
-        async function verifyAdminAccess() {
-            const adminId = document.getElementById("admin-id-input").value.trim();
-            const password = document.getElementById("admin-password-input").value;
-            const errorDiv = document.getElementById("auth-error");
-            errorDiv.innerHTML = "";
-
-            if (!adminId || !password) {
-                errorDiv.innerHTML = "<p class='error-msg'>Please enter both User ID and Password.</p>";
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(adminId)}/verify-admin`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_password: password })
-                });
-
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.detail || "Authentication failed.");
-                }
-
-                const data = await response.json();
-
-                sessionStorage.setItem("admin_authenticated", "true");
-                sessionStorage.setItem("admin_user_id", data.user_id);
-                sessionStorage.setItem("admin_full_name", data.full_name);
-
-                showAdminDashboard(data.user_id, data.full_name);
-
-            } catch (error) {
-                errorDiv.innerHTML = `<p class='error-msg'>Error: ${error.message}</p>`;
-            }
-        }
-
-        function logoutAdmin() {
-            closeDossierDrawer();
-            sessionStorage.removeItem("admin_authenticated");
-            sessionStorage.removeItem("admin_user_id");
-            sessionStorage.removeItem("admin_full_name");
-            document.getElementById("admin-id-input").value = "";
-            document.getElementById("admin-password-input").value = "";
-            document.getElementById("auth-error").innerHTML = "";
-            document.getElementById("admin-dashboard").style.display = "none";
-            document.getElementById("auth-section").style.display = "block";
-            document.getElementById("back-to-student-link").style.display = "inline-block";
-        }
-
-        async function createProgram() {
-            const courseId = document.getElementById("prog-id").value.trim();
-            const courseName = document.getElementById("prog-name").value.trim();
-            const academicYear = document.getElementById("prog-year").value.trim();
-            const resultDiv = document.getElementById("prog-result");
-            resultDiv.innerHTML = "";
-
-            if (!courseId || !courseName || !academicYear) {
-                resultDiv.innerHTML = "<p class='error-msg'>Please fill in all program fields.</p>";
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/programs/`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        course_id: courseId,
-                        course_name: courseName,
-                        academic_year: academicYear,
-                        is_active: true
-                    })
-                });
-
-                if (!response.ok) {
-                    const err = await response.json();
-                    let errorMsg = "Failed to create program.";
-                    if (typeof err.detail === "string") errorMsg = err.detail;
-                    else if (Array.isArray(err.detail)) errorMsg = err.detail.map(e => e.msg).join(', ');
-                    throw new Error(errorMsg);
-                }
-
-                const data = await response.json();
-                resultDiv.innerHTML = `<p class='success-msg'>&#10003; Program '${data.course_name}' (${data.course_id}) published successfully.</p>`;
-
-                document.getElementById("prog-id").value = "";
-                document.getElementById("prog-name").value = "";
-                document.getElementById("prog-year").value = "";
-
-            } catch (error) {
-                resultDiv.innerHTML = `<p class='error-msg'>Error: ${error.message}</p>`;
-            }
-        }
-
-        async function updateApplicationStatus(applicationId, newStatus) {
-            const feedbackDiv = document.getElementById("admin-action-feedback");
-            feedbackDiv.innerHTML = "";
-
-            try {
-                const response = await fetch(`${API_BASE}/applications/${applicationId}/status`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ status: newStatus })
-                });
-
-                if (!response.ok) {
-                    const err = await response.json();
-                    throw new Error(err.detail || "Failed to update application status.");
-                }
-
-                feedbackDiv.innerHTML = `<p class='success-msg'>&#10003; Dossier <strong>${applicationId}</strong> status updated to <strong>${newStatus.toUpperCase()}</strong>.</p>`;
-                closeDossierDrawer();
-                fetchAllApplications();
-
-            } catch (error) {
-                feedbackDiv.innerHTML = `<p class='error-msg'>Error: ${error.message}</p>`;
-            }
-        }
-
-        function openDossierDrawer(applicationId) {
-            const app = cachedApplications.find(a => a.application_id === applicationId);
-            if (!app) return;
-
-            document.getElementById("drawer-app-id").innerText = app.application_id;
-            const badgeClass = `status-badge status-${app.status}`;
-            const statusLabel = app.status.replace("_", " ").toUpperCase();
-
-            let docsSection = `<p style="color: var(--on-surface-variant); font-size: 13px;">No documents uploaded yet.</p>`;
-            if (app.documents && app.documents.length > 0) {
-                docsSection = app.documents.map(doc => {
-                    const normalizedPath = (doc.file_path || "").replace(/\\/g, "/");
-                    const fileUrl = `${API_BASE}/${normalizedPath}`;
-                    return `
-                        <div style="background: var(--surface); border: 1px solid var(--surface-container); padding: 12px 14px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div style="font-weight: 600; color: var(--primary); font-size: 13px;">${doc.document_type}</div>
-                                <div style="font-size: 12px; color: var(--on-surface-variant);">${doc.file_name}</div>
-                            </div>
-                            <a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="doc-link">Open File &nearr;</a>
-                        </div>
-                    `;
-                }).join("");
-            }
-
-            let paymentSection = `<p style="color: var(--on-surface-variant); font-size: 13px;">No fee deposit recorded.</p>`;
-            if (app.payments && app.payments.length > 0) {
-                paymentSection = app.payments.map(pay => `
-                    <div style="background: var(--surface); border: 1px solid var(--surface-container); padding: 12px 14px; border-radius: 6px;">
-                        <div style="font-size: 12px; color: var(--on-surface-variant);">Reference Number</div>
-                        <div style="font-weight: 700; color: var(--primary); font-size: 14px; margin-bottom: 6px;">${pay.reference_number}</div>
-                        <div style="font-size: 13px;">Channel: <strong>${pay.payment_method.toUpperCase()}</strong> &bull; Amount: <strong>PHP ${Number(pay.amount).toFixed(2)}</strong></div>
-                    </div>
-                `).join("");
-            }
-
-            document.getElementById("drawer-body-content").innerHTML = `
-                <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--on-surface-variant);">Candidate User ID</span>
-                        <div style="font-size: 16px; font-weight: 600; color: var(--primary);">${app.user_id}</div>
-                    </div>
-                    <span class="${badgeClass}">${statusLabel}</span>
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--on-surface-variant);">Applied Program</span>
-                    <div style="font-size: 15px; font-weight: 600; color: var(--on-surface);">${app.program ? app.program.course_name : app.course_id} (${app.course_id})</div>
-                </div>
-                <hr style="border: none; border-top: 1px solid var(--surface-container); margin: 18px 0;">
-                <h4 style="font-family: 'Source Serif 4', Georgia, serif; color: var(--primary); margin: 0 0 10px 0;">Submitted Academic Documents</h4>
-                ${docsSection}
-                <hr style="border: none; border-top: 1px solid var(--surface-container); margin: 18px 0;">
-                <h4 style="font-family: 'Source Serif 4', Georgia, serif; color: var(--primary); margin: 0 0 10px 0;">Admissions Deposit Receipt</h4>
-                ${paymentSection}
-            `;
-
-            const isApproved = app.status === "approved";
-            const isRejected = app.status === "rejected";
-            document.getElementById("drawer-footer-actions").innerHTML = `
-                <button class="btn-approve" onclick="updateApplicationStatus('${app.application_id}', 'approved')" ${isApproved ? "disabled" : ""} style="padding: 8px 16px;">Approve Candidate</button>
-                <button class="btn-reject" onclick="updateApplicationStatus('${app.application_id}', 'rejected')" ${isRejected ? "disabled" : ""} style="padding: 8px 16px;">Reject Dossier</button>
-            `;
-
-            document.getElementById("drawer-backdrop").classList.add("open");
-            document.getElementById("inspection-drawer").classList.add("open");
-        }
-
-        function closeDossierDrawer() {
-            document.getElementById("drawer-backdrop").classList.remove("open");
-            document.getElementById("inspection-drawer").classList.remove("open");
-        }
-
-        async function fetchAllApplications() {
-            const container = document.getElementById("admin-table-container");
-            container.innerHTML = "<p style='color: var(--on-surface-variant);'>Loading admissions data...</p>";
-
-            try {
-                const response = await fetch(`${API_BASE}/admin/applications`);
-                if (!response.ok) {
-                    throw new Error("Failed to fetch applications.");
-                }
-                const applications = await response.json();
-                cachedApplications = applications;
-
-                // Update KPI Metrics
-                document.getElementById("metric-total").innerText = applications.length;
-                document.getElementById("metric-review").innerText = applications.filter(a => a.status === "under_review" || a.status === "submitted").length;
-                document.getElementById("metric-approved").innerText = applications.filter(a => a.status === "approved").length;
-                document.getElementById("metric-other").innerText = applications.filter(a => a.status === "rejected" || a.status === "draft").length;
-
-                if (applications.length === 0) {
-                    container.innerHTML = "<p style='color: var(--on-surface-variant); padding: 12px 0;'>No applications found in the database.</p>";
-                    return;
-                }
-
-                let html = `
-                <div class="table-scroll">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Application ID</th>
-                            <th>Student User ID</th>
-                            <th>Course ID</th>
-                            <th>Status</th>
-                            <th>Documents</th>
-                            <th>Payments</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-                applications.forEach(app => {
-                    let badgeClass = `status-badge status-${app.status}`;
-                    let statusLabel = app.status.replace("_", " ").toUpperCase();
-
-                    let docsHtml = `<span style="color: var(--on-surface-variant); font-size: 12px;">0 file(s)</span>`;
-                    if (app.documents && app.documents.length > 0) {
-                        docsHtml = app.documents.map(doc => {
-                            const normalizedPath = (doc.file_path || "").replace(/\\/g, "/");
-                            const fileUrl = `${API_BASE}/${normalizedPath}`;
-                            return `<a href="${fileUrl}" target="_blank" rel="noopener noreferrer" class="doc-link">&#128196; ${doc.document_type} (${doc.file_name})</a>`;
-                        }).join("");
-                    }
-
-                    let paymentsHtml = `<span style="color: var(--on-surface-variant); font-size: 12px;">0 record(s)</span>`;
-                    if (app.payments && app.payments.length > 0) {
-                        paymentsHtml = app.payments.map(pay =>
-                            `<div style="font-size: 12px;"><strong style="color: var(--primary);">${pay.reference_number}</strong><br><span style="color: var(--on-surface-variant);">${pay.payment_method.toUpperCase()} &bull; PHP ${Number(pay.amount).toFixed(2)}</span></div>`
-                        ).join("");
-                    }
-
-                    const isApproved = app.status === "approved";
-                    const isRejected = app.status === "rejected";
-
-                    html += `
-                    <tr>
-                        <td><strong style="color: var(--primary);">${app.application_id}</strong></td>
-                        <td>${app.user_id}</td>
-                        <td><strong>${app.course_id}</strong></td>
-                        <td><span class="${badgeClass}">${statusLabel}</span></td>
-                        <td>${docsHtml}</td>
-                        <td>${paymentsHtml}</td>
-                        <td style="white-space: nowrap;">
-                            <button class="btn-inspect" onclick="openDossierDrawer('${app.application_id}')">Inspect</button>
-                            <button class="btn-approve" onclick="updateApplicationStatus('${app.application_id}', 'approved')" ${isApproved ? "disabled" : ""}>Approve</button>
-                            <button class="btn-reject" onclick="updateApplicationStatus('${app.application_id}', 'rejected')" ${isRejected ? "disabled" : ""}>Reject</button>
-                        </td>
-                    </tr>
-                `;
-                });
-
-                html += `</tbody></table></div>`;
-                container.innerHTML = html;
-
-            } catch (error) {
-                container.innerHTML = `<p class="error-msg">Error: ${error.message}</p>`;
-            }
-        }
-    </script>
 
 </body>
 
