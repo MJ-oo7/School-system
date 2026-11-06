@@ -1,0 +1,566 @@
+:root {
+    --surface: #F8FAFC;
+    --surface-lowest: #FFFFFF;
+    --surface-low: #F1F5F9;
+    --surface-container: #E2E8F0;
+    --on-surface: #0F172A;
+    --on-surface-variant: #475569;
+    --outline: #64748B;
+    --outline-variant: #CBD5E1;
+    --primary: #0F294A;
+    --primary-hover: #1B365D;
+    --accent: #D97706;
+    --accent-hover: #B45309;
+    --error-bg: #FFF1F2;
+    --error-border: #FECDD3;
+    --error-text: #BE123C;
+    --success-bg: #ECFDF5;
+    --success-border: #A7F3D0;
+    --success-text: #047857;
+    --shadow-layer-1: 0 1px 3px 0 rgba(15, 41, 74, 0.04), 0 1px 2px -1px rgba(15, 41, 74, 0.02);
+    --shadow-layer-2: 0 4px 6px -1px rgba(15, 41, 74, 0.07), 0 2px 4px -2px rgba(15, 41, 74, 0.04);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--surface);
+    color: var(--on-surface);
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 20px;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Institutional Top Navigation Bar */
+.institutional-navbar {
+    background-color: var(--primary);
+    border-bottom: 3px solid var(--accent);
+    color: #FFFFFF;
+    padding: 16px 32px;
+    box-shadow: var(--shadow-layer-2);
+}
+
+.navbar-inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-crest {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(254, 147, 44, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: #FE932C;
+}
+
+.brand-super {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #B0C8F1;
+    display: block;
+}
+
+.navbar-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+.badge {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    color: #FFFFFF;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.container {
+    max-width: 960px;
+    margin: 28px auto 56px auto;
+    padding: 0 24px;
+}
+
+.wizard-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.wizard-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.wizard-toolbar-label {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+    font-weight: 500;
+}
+
+.btn-back {
+    background-color: var(--surface-lowest);
+    color: var(--primary);
+    border: 1px solid var(--outline-variant);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: auto !important;
+    margin-top: 0 !important;
+    box-shadow: var(--shadow-layer-1);
+    transition: background-color 0.15s ease;
+}
+
+.btn-back:hover {
+    background-color: var(--surface-low);
+}
+
+/* Multi-Step Progression Bar */
+.stepper-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 720px) {
+    .stepper-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.stepper-card {
+    background: var(--surface-lowest);
+    border: 1px solid var(--surface-container);
+    border-left: 3px solid var(--outline-variant);
+    border-radius: 6px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow-layer-1);
+    transition: all 0.2s ease;
+}
+
+.stepper-card.active-step {
+    border-left: 3px solid var(--accent);
+    box-shadow: var(--shadow-layer-2);
+}
+
+.stepper-card.completed-step {
+    border-left: 3px solid var(--primary);
+    background-color: #F8FAFC;
+}
+
+.step-indicator {
+    width: 28px;
+    height: 28px;
+    border-radius: 9999px;
+    background: var(--surface-low);
+    border: 1px solid var(--outline-variant);
+    color: var(--on-surface-variant);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stepper-card.active-step .step-indicator {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #FFFFFF;
+}
+
+.stepper-card.completed-step .step-indicator {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #FFFFFF;
+}
+
+.step-meta-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--on-surface-variant);
+    display: block;
+}
+
+.step-meta-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Active Wizard Stage Card */
+.wizard-step {
+    display: none;
+    background: var(--surface-lowest);
+    border: 1px solid var(--surface-container);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 28px 32px;
+    box-shadow: var(--shadow-layer-1);
+}
+
+.wizard-step.active {
+    display: block;
+}
+
+h3 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+    color: var(--primary);
+    margin: 0 0 6px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--surface-container);
+}
+
+.step-intro-text {
+    font-size: 14px;
+    color: var(--on-surface-variant);
+    margin: 8px 0 20px 0;
+}
+
+.step-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--surface-container);
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.heading-no-border {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dossier-chip {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--surface-low);
+    border: 1px solid var(--outline-variant);
+    padding: 4px 10px;
+    border-radius: 9999px;
+}
+
+.doc-instructions {
+    font-size: 13px;
+    color: var(--on-surface-variant);
+    margin: 0 0 20px 0;
+}
+
+/* Program Selection Cards */
+.program-card {
+    background: var(--surface-lowest);
+    border: 1px solid var(--surface-container);
+    padding: 18px 22px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-layer-1);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.program-card:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-layer-2);
+}
+
+.program-code-pill {
+    display: inline-block;
+    background: var(--surface-low);
+    border: 1px solid var(--outline-variant);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    margin-bottom: 6px;
+}
+
+/* Document Dropzone (2px dashed Slate-300, Slate-50 bg, Navy progress meter) */
+.doc-upload-box {
+    background: var(--surface);
+    border: 2px dashed var(--outline-variant);
+    padding: 20px 24px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.doc-upload-box:hover {
+    border-color: var(--primary);
+    background: #F1F5F9;
+}
+
+.dropzone-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.dropzone-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.dropzone-spec {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--on-surface-variant);
+    background: var(--surface-lowest);
+    border: 1px solid var(--outline-variant);
+    padding: 2px 8px;
+    border-radius: 9999px;
+}
+
+.dropzone-desc {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+    margin: 0 0 8px 0;
+}
+
+.progress-track {
+    width: 100%;
+    height: 6px;
+    background: var(--surface-container);
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-top: 10px;
+    display: none;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: var(--primary);
+    transition: width 0.3s ease;
+}
+
+/* Payment Method Segmented Radio Card Grid */
+.payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 12px 0 22px 0;
+}
+
+@media (max-width: 680px) {
+    .payment-methods-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.payment-card {
+    position: relative;
+    background: var(--surface-lowest);
+    border: 1px solid var(--outline-variant);
+    border-radius: 6px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: var(--shadow-layer-1);
+}
+
+.payment-card:hover {
+    border-color: var(--primary);
+}
+
+.payment-card.selected {
+    border: 2px solid var(--primary);
+    background-color: #F8FAFC;
+    padding: 15px;
+}
+
+.payment-check-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 9999px;
+    background-color: var(--primary);
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.payment-card.selected .payment-check-badge {
+    display: flex;
+}
+
+.payment-card-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+
+.payment-card-desc {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+}
+
+.hidden-select {
+    display: none;
+}
+
+.fee-summary-box {
+    background: var(--surface);
+    border: 1px solid var(--surface-container);
+    padding: 18px 20px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fee-label {
+    margin-bottom: 2px;
+}
+
+.fee-subtext {
+    font-size: 12px;
+    color: var(--on-surface-variant);
+}
+
+.fee-amount-input {
+    width: 140px !important;
+    text-align: right;
+    font-weight: 700;
+    font-size: 18px !important;
+    color: var(--primary) !important;
+    background: var(--surface-lowest) !important;
+    margin: 0 !important;
+}
+
+/* Buttons & Inputs */
+button {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--primary);
+    color: #FFFFFF;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    width: 100%;
+    margin-top: 10px;
+    transition: background-color 0.15s ease;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-success {
+    background-color: var(--accent);
+    color: #FFFFFF;
+}
+
+.btn-success:hover {
+    background-color: var(--accent-hover);
+}
+
+input,
+select {
+    font-family: 'Inter', sans-serif;
+    padding: 10px 12px;
+    width: 100%;
+    margin: 6px 0 10px 0;
+    border: 1px solid var(--outline-variant);
+    border-radius: 4px;
+    background-color: var(--surface-lowest);
+    color: var(--on-surface);
+    font-size: 14px;
+}
+
+label {
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--on-surface-variant);
+    display: block;
+}
+
+.muted-text {
+    color: var(--on-surface-variant);
+}
+
+.success-msg {
+    background-color: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--success-text);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.error-msg {
+    background-color: var(--error-bg);
+    border: 1px solid var(--error-border);
+    color: var(--error-text);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-top: 8px;
+    font-size: 13px;
+}
